@@ -25,7 +25,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .shift-indicator{appearance:none;position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 16px);left:17px;width:46px;height:26px;border-radius:20px;background:#d83c4c;box-shadow:0 3px 14px #00152e35;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .2s}
 .shift-indicator{width:54px;height:30px;border:1px solid #ffffff45;background:linear-gradient(135deg,#a9344c,#e34e63);box-shadow:0 5px 18px #06152f55,inset 0 1px 2px #ffffff35;border-radius:20px;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .22s,box-shadow .22s}
 .shift-indicator span{width:22px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .2s}
-.shift-indicator.is-online{background:linear-gradient(135deg,#078c75,#19c99b);box-shadow:0 5px 20px #0bb98a55,inset 0 1px 2px #ffffff55}
+.shift-indicator.is-online{background:linear-gradient(135deg,#087bff,#36aaff);box-shadow:0 5px 20px #087bff55,inset 0 1px 2px #ffffff55}
 .shift-indicator.is-online span{transform:translateX(24px)}
 .locator{position:absolute;z-index:3;top:39%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px #0005)}
 .locator svg{width:54px;height:62px}
@@ -49,10 +49,16 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .bonus .time{font-size:13px;font-weight:750}.bonus .muted{font-size:11px;color:#9eb7dc;margin-top:3px}
 .bonus .percent{font-size:19px;font-weight:900;color:#65b7ff;white-space:nowrap}
 .online{touch-action:pan-y;user-select:none;-webkit-user-select:none;height:78px;border-radius:22px;padding:6px;display:flex;align-items:center;gap:10px;background:linear-gradient(100deg,#087bff,#1769ed);box-shadow:0 8px 24px #006eff35;margin-bottom:12px}
-.online.online-now{background:linear-gradient(100deg,#078b72,#0ca58b)}
+.online.online-now{background:linear-gradient(100deg,#087bff,#1769ed)}
 .slider-knob{width:64px;height:64px;flex:none;border-radius:18px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:33px;box-shadow:0 3px 12px #001b3b35;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
-.online.online-now .slider-knob{color:#078b72}
-.online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}.online-copy .online-headline{font-weight:900}.online.online-now .online-copy{color:#06152f}.online.online-now .online-copy .state{color:#06152f;font-weight:800;opacity:1}.online.online-now .online-copy .online-headline{color:#06152f;font-size:15px}.online.online-now.searching .online-copy .online-headline{animation:searchPulse 1.5s ease-in-out infinite}@keyframes searchPulse{0%,100%{opacity:1}50%{opacity:.58}}
+.online.online-now .slider-knob{color:#087bff}
+.online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}.online-copy .online-headline{font-weight:900}
+.top-online-status{position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 18px);left:50%;transform:translateX(-50%);display:none;min-width:142px;padding:9px 17px 10px;border-radius:17px;text-align:center;color:#fff;background:rgba(6,25,52,.88);border:1px solid #75baff66;box-shadow:0 8px 26px #06152f35;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);line-height:1.2;pointer-events:none}
+.top-online-status.visible{display:block}
+.top-online-status .state{display:block;font-size:14px;font-weight:750;letter-spacing:.15px}
+.top-online-status strong{display:block;margin-top:3px;font-size:14px;font-weight:850;color:#8ecaff}
+.top-online-status.searching strong{animation:searchPulse 1.5s ease-in-out infinite}
+@keyframes searchPulse{0%,100%{opacity:1}50%{opacity:.58}}
 .nav{position:absolute;z-index:7;left:0;right:0;bottom:0;height:calc(var(--nav-height) + env(safe-area-inset-bottom));padding:8px 5px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,#0b2345,#06152f);border-top:1px solid #65a8f333;box-shadow:0 -8px 25px #00152e35}
 .nav button{background:transparent;color:#8da9cf;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 0;font-size:10px}
 .nav button.active{color:#fff}.nav-icon{width:24px;height:24px;display:grid;place-items:center;color:#8da9cf}
@@ -100,6 +106,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
     </svg>
   </div>
   <button class="shift-indicator" id="shiftIndicator" aria-label="Завершить смену" title="Завершить смену"><span></span></button>
+  <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
 
@@ -117,7 +124,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
       <div class="bonus"><div><div class="time">07:20 — 08:49</div><div class="muted">Бонусы в городе · пример</div></div><div class="percent">+13 — 17%</div></div>
       <div class="online" id="onlineControl">
         <button class="slider-knob" id="sliderKnob" aria-label="Переключить статус">➜</button>
-        <div class="online-copy"><span class="state" id="onlineState">Офлайн</span><strong class="online-headline" id="onlineText">Выйти на линию</strong></div>
+        <div class="online-copy"><strong class="online-headline" id="onlineText">Выйти на линию</strong></div>
       </div>
     </div>
   </section>
@@ -206,8 +213,9 @@ function updateOnline(value){
   online=value;
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
-  document.getElementById('onlineState').textContent=online?'Онлайн':'Офлайн';
-  document.getElementById('onlineText').textContent=online?'Ищем заказы':'Выйти на линию';
+  document.getElementById('topOnlineStatus').classList.toggle('visible',online);
+  document.getElementById('topOnlineStatus').classList.toggle('searching',online);
+  document.getElementById('onlineText').textContent=online?'На линии':'Выйти на линию';
   knob.textContent=online?'✓':'➜';
   const shiftIndicator=document.getElementById('shiftIndicator');
   shiftIndicator.classList.toggle('is-online',online);
