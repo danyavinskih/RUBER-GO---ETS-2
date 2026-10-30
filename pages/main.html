@@ -22,10 +22,11 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .map:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#06152f24,transparent 22%,transparent 70%,#06152f14);pointer-events:none}
 .brand{position:absolute;z-index:3;top:calc(env(safe-area-inset-top) + 42px);left:17px;padding:9px 13px;border-radius:13px;background:#071a36ef;box-shadow:0 5px 20px #00152e35;font-weight:900;letter-spacing:1px}
 .brand span{color:#44aaff}
-.shift-indicator{position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 16px);left:17px;width:46px;height:26px;border-radius:20px;background:#d83c4c;box-shadow:0 3px 14px #00152e35;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .2s}
-.shift-indicator span{width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .2s}
-.shift-indicator.is-online{background:#10a875}
-.shift-indicator.is-online span{transform:translateX(20px)}
+.shift-indicator{appearance:none;position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 16px);left:17px;width:46px;height:26px;border-radius:20px;background:#d83c4c;box-shadow:0 3px 14px #00152e35;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .2s}
+.shift-indicator{width:54px;height:30px;border:1px solid #ffffff45;background:linear-gradient(135deg,#a9344c,#e34e63);box-shadow:0 5px 18px #06152f55,inset 0 1px 2px #ffffff35;border-radius:20px;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .22s,box-shadow .22s}
+.shift-indicator span{width:22px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .2s}
+.shift-indicator.is-online{background:linear-gradient(135deg,#078c75,#19c99b);box-shadow:0 5px 20px #0bb98a55,inset 0 1px 2px #ffffff55}
+.shift-indicator.is-online span{transform:translateX(24px)}
 .locator{position:absolute;z-index:3;top:39%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px #0005)}
 .locator svg{width:54px;height:62px}
 .map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--nav-height) + 18px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30}
@@ -39,7 +40,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .stats{display:grid;grid-template-columns:1fr 1fr;background:#ffffff0b;border:1px solid #ffffff12;border-radius:17px;padding:13px 4px;margin-bottom:11px}
 .stat{display:flex;justify-content:center;align-items:center;gap:9px;min-width:0}
 .stat+.stat{border-left:1px solid #ffffff20}
-.stat-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:#1685ff22;color:#70bcff;font-size:21px}
+.stat-icon{width:40px;height:40px;flex:none;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#1685ff35,#36aaff12);border:1px solid #62b5ff35;color:#83caff;box-shadow:inset 0 1px 0 #ffffff18,0 4px 14px #006eff18}.stat-icon svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .stat-label{font-size:11px;color:#a9c0e2}.stat-value{font-size:19px;font-weight:850;margin-top:1px;white-space:nowrap}
 .tariff-card{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;padding:14px 15px;margin-bottom:10px;border-radius:16px;color:#fff;background:linear-gradient(105deg,#123c73,#0d2b56);border:1px solid #3f83cf55}
 .tariff-card .small{font-size:11px;color:#a9c0e2;margin-bottom:3px}.tariff-card strong{font-size:15px}
@@ -47,9 +48,9 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .bonus{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 15px;border-radius:16px;background:#ffffff0c;border:1px solid #ffffff10;margin-bottom:12px}
 .bonus .time{font-size:13px;font-weight:750}.bonus .muted{font-size:11px;color:#9eb7dc;margin-top:3px}
 .bonus .percent{font-size:19px;font-weight:900;color:#65b7ff;white-space:nowrap}
-.online{height:78px;border-radius:22px;padding:6px;display:flex;align-items:center;gap:10px;background:linear-gradient(100deg,#087bff,#1769ed);box-shadow:0 8px 24px #006eff35;margin-bottom:12px}
+.online{touch-action:pan-y;user-select:none;-webkit-user-select:none;height:78px;border-radius:22px;padding:6px;display:flex;align-items:center;gap:10px;background:linear-gradient(100deg,#087bff,#1769ed);box-shadow:0 8px 24px #006eff35;margin-bottom:12px}
 .online.online-now{background:linear-gradient(100deg,#078b72,#0ca58b)}
-.slider-knob{width:64px;height:64px;flex:none;border-radius:18px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:33px;box-shadow:0 3px 12px #001b3b35;touch-action:none;cursor:grab}
+.slider-knob{width:64px;height:64px;flex:none;border-radius:18px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:33px;box-shadow:0 3px 12px #001b3b35;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .online.online-now .slider-knob{color:#078b72}
 .online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}
 .nav{position:absolute;z-index:7;left:0;right:0;bottom:0;height:calc(var(--nav-height) + env(safe-area-inset-bottom));padding:8px 5px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,#0b2345,#06152f);border-top:1px solid #65a8f333;box-shadow:0 -8px 25px #00152e35}
@@ -106,8 +107,8 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
     <div class="handle-area" id="handleArea"><div class="handle"></div><div class="sheet-caption">ПОТЯНИ ВВЕРХ ИЛИ ВНИЗ</div></div>
     <div class="sheet-body">
       <div class="stats">
-        <div class="stat"><div class="stat-icon">▣</div><div><div class="stat-label">Заказы</div><div class="stat-value" id="orders">0 заказов</div></div></div>
-        <div class="stat"><div class="stat-icon">▰</div><div><div class="stat-label">Баланс</div><div class="stat-value" id="balance">0 Руб</div></div></div>
+        <div class="stat"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H20v14H6.5A2.5 2.5 0 0 1 4 16.5z"/><path d="M4 8h13M8 11h8M8 14h5"/></svg></div><div><div class="stat-label">Заказы</div><div class="stat-value" id="orders">0 заказов</div></div></div>
+        <div class="stat"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15 8.5c-.7-.6-1.7-.9-2.8-.9-1.5 0-2.6.7-2.6 1.8 0 2.9 5.6 1.1 5.6 4 0 1.2-1.2 2-2.9 2-1.2 0-2.4-.4-3.2-1.1M12 5.5v13"/></svg></div><div><div class="stat-label">Баланс</div><div class="stat-value" id="balance">0 Руб</div></div></div>
       </div>
       <button class="tariff-card" id="openTariffs">
         <span><span class="small">Выбранный тариф</span><br><strong id="currentTariff">Комфорт</strong></span>
@@ -142,49 +143,6 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 </section>
 
 <script>
-/* ЛОГИКА РЕГИСТРАЦИИ */
-let currentStep=0;
-const steps=document.querySelectorAll('.step');
-const progressBar=document.getElementById('progressBar');
-const backButton=document.getElementById('backButton');
-const nextButton=document.getElementById('nextButton');
-
-function showStep(){
-  steps.forEach((step,index)=>step.classList.toggle('active',index===currentStep));
-  progressBar.style.width=((currentStep+1)/steps.length*100)+'%';
-  backButton.style.display=currentStep===0?'none':'block';
-  nextButton.textContent=currentStep===steps.length-1?'Завершить регистрацию':'Продолжить';
-}
-function nextStep(){
-  if(currentStep===0 && document.getElementById('phone').value.trim().length<5){
-    alert('Пожалуйста, введи номер телефона.');return;
-  }
-  if(currentStep===1 && !document.getElementById('city').value.trim()){
-    alert('Пожалуйста, укажи свой город.');return;
-  }
-  if(currentStep===steps.length-1){finishRegistration();return;}
-  currentStep++;showStep();
-}
-function prevStep(){if(currentStep>0){currentStep--;showStep();}}
-function finishRegistration(){
-  const driver={
-    phone:document.getElementById('phone').value.trim(),
-    city:document.getElementById('city').value.trim(),
-    carModel:document.getElementById('carModel').value.trim(),
-    carColor:document.getElementById('carColor').value.trim(),
-    carPlate:document.getElementById('carPlate').value.trim()
-  };
-  try{localStorage.setItem('ruberGoDriver',JSON.stringify(driver));}
-  catch(e){alert('Не удалось сохранить данные в браузере.');return;}
-  document.getElementById('registration').style.display='none';
-  document.getElementById('success').style.display='block';
-}
-function openMainMenu(){
-  document.getElementById('registrationScreen').classList.remove('active');
-  document.getElementById('homeScreen').classList.add('active');
-}
-showStep();
-
 /* ЛОГИКА ШТОРКИ: вниз до ручки, вверх до половины/расширения */
 const sheet=document.getElementById('sheet');
 const handleArea=document.getElementById('handleArea');
@@ -227,6 +185,11 @@ document.querySelectorAll('.tariff-option').forEach(option=>{
 let online=false, knobDragging=false, knobStartX=0, knobOffset=0;
 const knob=document.getElementById('sliderKnob');
 const onlineControl=document.getElementById('onlineControl');
+const shiftIndicator=document.getElementById('shiftIndicator');
+shiftIndicator.addEventListener('click',()=>{
+  if(online) updateOnline(false);
+  else showToast('Чтобы выйти на линию, перетащи стрелку вправо');
+});
 function updateOnline(value){
   online=value;onlineControl.classList.toggle('online-now',online);
   document.getElementById('onlineState').textContent=online?'На линии':'Офлайн';
@@ -240,6 +203,7 @@ function updateOnline(value){
 }
 knob.addEventListener('pointerdown',e=>{
   if(online)return;
+  e.preventDefault();
   knobDragging=true;knobStartX=e.clientX;knobOffset=0;
   knob.setPointerCapture(e.pointerId);
 });
@@ -249,13 +213,14 @@ knob.addEventListener('pointermove',e=>{
   knobOffset=Math.max(0,Math.min(max,e.clientX-knobStartX));
   knob.style.transform=`translateX(${knobOffset}px)`;
 });
-knob.addEventListener('pointerup',()=>{
+function finishKnobDrag(){
   if(!knobDragging)return;
   const max=Math.max(1,onlineControl.clientWidth-knob.offsetWidth-12);
   knobDragging=false;
-  if(knobOffset>=max*.72)updateOnline(true);
+  if(knobOffset>=max*.55)updateOnline(true);
   else knob.style.transform='';
-});
+}
+knob.addEventListener('pointerup',finishKnobDrag);
 knob.addEventListener('pointercancel',()=>{
   knobDragging=false;knob.style.transform='';
 });
