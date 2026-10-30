@@ -1,11 +1,430 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RUBER GO</title>
-</head>
-<body>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RUBER GO — Регистрация</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #123d91 0%, transparent 48%),
+        linear-gradient(145deg, #050d20, #071a3c 60%, #06122b);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 22px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+      color: #ffffff;
+      text-shadow: 0 0 25px #1685ff;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #9bb9e9;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(14, 37, 78, 0.78);
+      border: 1px solid rgba(91, 157, 255, 0.25);
+      border-radius: 27px;
+      padding: 27px 22px;
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .progress {
+      height: 5px;
+      background: #20385f;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 25%;
+      background: linear-gradient(90deg, #087bff, #42b5ff);
+      border-radius: 10px;
+      transition: width 0.3s;
+    }
+
+    h2 {
+      font-size: 25px;
+      margin-bottom: 9px;
+    }
+
+    .description {
+      color: #a7bee2;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      color: #c9dcfa;
+      font-size: 13px;
+      margin: 17px 0 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 15px;
+      border: 1px solid #294c7f;
+      background: #091a36;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #1685ff;
+      box-shadow: 0 0 0 3px rgba(22, 133, 255, 0.15);
+    }
+
+    input::placeholder {
+      color: #7189ad;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 27px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 750;
+      transition: 0.2s;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    .primary {
+      width: 100%;
+      color: white;
+      background: linear-gradient(100deg, #086bff, #168fff);
+      box-shadow: 0 7px 25px rgba(0, 110, 255, 0.3);
+    }
+
+    .secondary {
+      background: #19345d;
+      color: #d4e5ff;
+      min-width: 105px;
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding: 20px 0 5px;
+    }
+
+    .success-icon {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 43px;
+      background: linear-gradient(145deg, #087bff, #36b5ff);
+      box-shadow: 0 0 40px rgba(22, 133, 255, 0.45);
+    }
+
+    .success h2 {
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    .success p {
+      color: #a7bee2;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .main-screen {
+      display: none;
+      text-align: center;
+    }
+
+    .main-screen p {
+      color: #a7bee2;
+      line-height: 1.6;
+      margin: 15px 0 25px;
+    }
+
+    .note {
+      color: #718db8;
+      text-align: center;
+      font-size: 11px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+
+    <div class="logo">RUBER GO</div>
+    <div class="subtitle">Твой путь начинается здесь</div>
+
+    <div class="card">
+
+      <div id="registration">
+
+        <div class="progress">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- ШАГ 1 -->
+        <section class="step active">
+          <h2>Добро пожаловать!</h2>
+          <p class="description">
+            Давай создадим аккаунт водителя RUBER GO.
+            Для начала укажи свой номер телефона.
+          </p>
+
+          <label>Номер телефона</label>
+          <input
+            id="phone"
+            type="tel"
+            placeholder="+7 999 123-45-67"
+          >
+        </section>
+
+        <!-- ШАГ 2 -->
+        <section class="step">
+          <h2>Твой город</h2>
+          <p class="description">
+            Укажи город, в котором ты сейчас находишься
+            в Euro Truck Simulator 2.
+          </p>
+
+          <label>Город</label>
+          <input
+            id="city"
+            type="text"
+            placeholder="Например, Санкт-Петербург"
+          >
+        </section>
+
+        <!-- ШАГ 3 -->
+        <section class="step">
+          <h2>Твой автомобиль</h2>
+          <p class="description">
+            Заполни информацию о грузовике или автомобиле,
+            на котором будешь выполнять поездки.
+          </p>
+
+          <label>Модель автомобиля</label>
+          <input
+            id="carModel"
+            type="text"
+            placeholder="Например, Volvo FH"
+          >
+
+          <label>Цвет автомобиля</label>
+          <input
+            id="carColor"
+            type="text"
+            placeholder="Например, синий"
+          >
+
+          <label>Государственный номер</label>
+          <input
+            id="carPlate"
+            type="text"
+            placeholder="Например, А123АА"
+          >
+        </section>
+
+        <div class="buttons">
+          <button
+            class="secondary"
+            id="backButton"
+            onclick="prevStep()"
+            style="display:none"
+          >
+            Назад
+          </button>
+
+          <button
+            class="primary"
+            id="nextButton"
+            onclick="nextStep()"
+          >
+            Продолжить
+          </button>
+        </div>
+
+      </div>
+
+      <!-- УСПЕШНАЯ РЕГИСТРАЦИЯ -->
+      <section class="success" id="success">
+        <div class="success-icon">✓</div>
+
+        <h2>Ты зарегистрирован!</h2>
+
+        <p>
+          Добро пожаловать в RUBER GO.
+          Твой аккаунт водителя успешно создан.
+          Впереди тебя ждут новые поездки!
+        </p>
+
+        <button class="primary" onclick="openMainScreen()">
+          Продолжить
+        </button>
+      </section>
+
+      <!-- ВРЕМЕННЫЙ ГЛАВНЫЙ ЭКРАН -->
+      <section class="main-screen" id="mainScreen">
+        <h2>RUBER GO</h2>
+
+        <p>
+          Регистрация завершена!<br>
+          Главный экран приложения скоро появится здесь.
+        </p>
+
+        <button class="primary" onclick="location.reload()">
+          Вернуться
+        </button>
+      </section>
+
+    </div>
+
+    <div class="note">
+      RUBER GO • ETS2 Virtual Taxi
+    </div>
+
+  </main>
+
+  <script>
+    let currentStep = 0;
+
+    const steps = document.querySelectorAll(".step");
+    const progressBar = document.getElementById("progressBar");
+    const backButton = document.getElementById("backButton");
+    const nextButton = document.getElementById("nextButton");
+
+    function showStep() {
+      steps.forEach((step, index) => {
+        step.classList.toggle("active", index === currentStep);
+      });
+
+      progressBar.style.width =
+        ((currentStep + 1) / steps.length * 100) + "%";
+
+      backButton.style.display =
+        currentStep === 0 ? "none" : "block";
+
+      nextButton.textContent =
+        currentStep === steps.length - 1
+          ? "Завершить регистрацию"
+          : "Продолжить";
+    }
+
+    function nextStep() {
+      if (currentStep === 0) {
+        const phone = document.getElementById("phone").value.trim();
+
+        if (phone.length < 5) {
+          alert("Пожалуйста, введи номер телефона.");
+          return;
+        }
+      }
+
+      if (currentStep === 1) {
+        const city = document.getElementById("city").value.trim();
+
+        if (!city) {
+          alert("Пожалуйста, укажи свой город.");
+          return;
+        }
+      }
+
+      if (currentStep === 2) {
+        finishRegistration();
+        return;
+      }
+
+      currentStep++;
+      showStep();
+    }
+
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep();
+      }
+    }
+
+    function finishRegistration() {
+      const driver = {
+        phone: document.getElementById("phone").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        carModel: document.getElementById("carModel").value.trim(),
+        carColor: document.getElementById("carColor").value.trim(),
+        carPlate: document.getElementById("carPlate").value.trim()
+      };
+
+      localStorage.setItem(
+        "ruberGoDriver",
+        JSON.stringify(driver)
+      );
+
+      document.getElementById("registration").style.display = "none";
+      document.getElementById("success").style.display = "block";
+    }
+
+    function openMainScreen() {
+      document.getElementById("success").style.display = "none";
+      document.getElementById("mainScreen").style.display = "block";
+    }
+
+    showStep();
+  </script>
 </body>
 </html>
