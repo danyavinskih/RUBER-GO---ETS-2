@@ -45,6 +45,10 @@ input::placeholder{color:#7189ad}
 .map:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#06152f24,transparent 22%,transparent 70%,#06152f14);pointer-events:none}
 .brand{position:absolute;z-index:3;top:calc(env(safe-area-inset-top) + 42px);left:17px;padding:9px 13px;border-radius:13px;background:#071a36ef;box-shadow:0 5px 20px #00152e35;font-weight:900;letter-spacing:1px}
 .brand span{color:#44aaff}
+.shift-indicator{position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 16px);left:17px;width:46px;height:26px;border-radius:20px;background:#d83c4c;box-shadow:0 3px 14px #00152e35;padding:3px;display:flex;align-items:center;justify-content:flex-start;transition:background .2s}
+.shift-indicator span{width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .2s}
+.shift-indicator.is-online{background:#10a875}
+.shift-indicator.is-online span{transform:translateX(20px)}
 .locator{position:absolute;z-index:3;top:39%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px #0005)}
 .locator svg{width:54px;height:62px}
 .map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--nav-height) + 18px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30}
@@ -73,7 +77,9 @@ input::placeholder{color:#7189ad}
 .online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}
 .nav{position:absolute;z-index:7;left:0;right:0;bottom:0;height:calc(var(--nav-height) + env(safe-area-inset-bottom));padding:8px 5px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,#0b2345,#06152f);border-top:1px solid #65a8f333;box-shadow:0 -8px 25px #00152e35}
 .nav button{background:transparent;color:#8da9cf;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 0;font-size:10px}
-.nav button.active{color:#fff}.nav-icon{font-size:21px;line-height:1.1}.nav button.active .nav-icon{color:#55adff}
+.nav button.active{color:#fff}.nav-icon{width:24px;height:24px;display:grid;place-items:center;color:#8da9cf}
+.nav-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav button.active .nav-icon{color:#55adff}
 .modal-backdrop{position:absolute;z-index:10;inset:0;background:#020b1bcc;display:none;align-items:flex-end;justify-content:center;padding:15px}
 .modal-backdrop.show{display:flex}
 .modal{width:100%;max-width:480px;border-radius:24px;padding:20px;background:linear-gradient(155deg,#153660,#091b37);border:1px solid #65a8f344;box-shadow:0 15px 50px #0008}
@@ -160,7 +166,7 @@ input::placeholder{color:#7189ad}
       </g>
     </svg>
   </div>
-  <div class="brand"><span>●</span> RUBER GO</div>
+  <button class="shift-indicator" id="shiftIndicator" aria-label="Завершить смену" title="Завершить смену"><span></span></button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
 
@@ -169,7 +175,7 @@ input::placeholder{color:#7189ad}
     <div class="sheet-body">
       <div class="stats">
         <div class="stat"><div class="stat-icon">▣</div><div><div class="stat-label">Заказы</div><div class="stat-value" id="orders">0 заказов</div></div></div>
-        <div class="stat"><div class="stat-icon">▰</div><div><div class="stat-label">Баланс</div><div class="stat-value" id="balance">0 KGS</div></div></div>
+        <div class="stat"><div class="stat-icon">▰</div><div><div class="stat-label">Баланс</div><div class="stat-value" id="balance">0 Руб</div></div></div>
       </div>
       <button class="tariff-card" id="openTariffs">
         <span><span class="small">Выбранный тариф</span><br><strong id="currentTariff">Комфорт</strong></span>
@@ -183,10 +189,10 @@ input::placeholder{color:#7189ad}
     </div>
   </section>
   <nav class="nav">
-    <button class="active" data-tab="Заказы"><span class="nav-icon">➤</span><span>Заказы</span></button>
-    <button data-tab="Деньги"><span class="nav-icon">▰</span><span>Деньги</span></button>
-    <button data-tab="Чаты"><span class="nav-icon">●</span><span>Чаты</span></button>
-    <button data-tab="Профиль"><span class="nav-icon">◉</span><span>Профиль</span></button>
+    <button class="active" data-tab="Заказы"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/><circle cx="7" cy="6.5" r="1.5"/><circle cx="17" cy="12" r="1.5"/><circle cx="9" cy="17.5" r="1.5"/></svg></span><span>Заказы</span></button>
+    <button data-tab="Деньги"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="M3.5 10h17M7 14.5h3"/></svg></span><span>Деньги</span></button>
+    <button data-tab="Чаты"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-2.5 2v-6A7.5 7.5 0 1 1 20 11.5Z"/><path d="M8 11.5h8M8 14.5h5"/></svg></span><span>Чаты</span></button>
+    <button data-tab="Профиль"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><span>Профиль</span></button>
   </nav>
 
   <div class="modal-backdrop" id="tariffModal">
@@ -294,6 +300,9 @@ function updateOnline(value){
   document.getElementById('onlineState').textContent=online?'На линии':'Офлайн';
   document.getElementById('onlineText').textContent=online?'Завершить смену':'Выйти на линию';
   knob.textContent=online?'✓':'➜';
+  const shiftIndicator=document.getElementById('shiftIndicator');
+  shiftIndicator.classList.toggle('is-online',online);
+  shiftIndicator.setAttribute('aria-label',online?'Завершить смену':'Смена не активна');
   knob.style.transform='';
   showToast(online?'Ты вышел на линию (демо)':'Ты завершил смену (демо)');
 }
