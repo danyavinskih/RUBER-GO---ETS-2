@@ -52,7 +52,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .online.online-now{background:linear-gradient(100deg,#078b72,#0ca58b)}
 .slider-knob{width:64px;height:64px;flex:none;border-radius:18px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:33px;box-shadow:0 3px 12px #001b3b35;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .online.online-now .slider-knob{color:#078b72}
-.online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}
+.online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}.online-copy .online-headline{font-weight:900}.online.online-now .online-copy{color:#06152f}.online.online-now .online-copy .state{color:#06152f;font-weight:800;opacity:1}.online.online-now .online-copy .online-headline{color:#06152f;font-size:15px}.online.online-now.searching .online-copy .online-headline{animation:searchPulse 1.5s ease-in-out infinite}@keyframes searchPulse{0%,100%{opacity:1}50%{opacity:.58}}
 .nav{position:absolute;z-index:7;left:0;right:0;bottom:0;height:calc(var(--nav-height) + env(safe-area-inset-bottom));padding:8px 5px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,#0b2345,#06152f);border-top:1px solid #65a8f333;box-shadow:0 -8px 25px #00152e35}
 .nav button{background:transparent;color:#8da9cf;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 0;font-size:10px}
 .nav button.active{color:#fff}.nav-icon{width:24px;height:24px;display:grid;place-items:center;color:#8da9cf}
@@ -117,7 +117,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
       <div class="bonus"><div><div class="time">07:20 — 08:49</div><div class="muted">Бонусы в городе · пример</div></div><div class="percent">+13 — 17%</div></div>
       <div class="online" id="onlineControl">
         <button class="slider-knob" id="sliderKnob" aria-label="Переключить статус">➜</button>
-        <div class="online-copy"><span class="state" id="onlineState">Офлайн</span><strong id="onlineText">Выйти на линию</strong></div>
+        <div class="online-copy"><span class="state" id="onlineState">Офлайн</span><strong class="online-headline" id="onlineText">Выйти на линию</strong></div>
       </div>
     </div>
   </section>
@@ -190,16 +190,36 @@ shiftIndicator.addEventListener('click',()=>{
   if(online) updateOnline(false);
   else showToast('Чтобы выйти на линию, перетащи стрелку вправо');
 });
+let searchTimer=null;
+function startOrderSearch(){
+  clearTimeout(searchTimer);
+  // Имитация поиска: длительность каждого цикла случайная — от 10 до 60 секунд.
+  const searchDuration=10000+Math.floor(Math.random()*50001);
+  searchTimer=setTimeout(()=>{
+    if(online){
+      // Заказ пока не назначаем: поиск продолжается до следующего этапа приложения.
+      startOrderSearch();
+    }
+  },searchDuration);
+}
 function updateOnline(value){
-  online=value;onlineControl.classList.toggle('online-now',online);
-  document.getElementById('onlineState').textContent=online?'На линии':'Офлайн';
-  document.getElementById('onlineText').textContent=online?'Завершить смену':'Выйти на линию';
+  online=value;
+  onlineControl.classList.toggle('online-now',online);
+  onlineControl.classList.toggle('searching',online);
+  document.getElementById('onlineState').textContent=online?'Онлайн':'Офлайн';
+  document.getElementById('onlineText').textContent=online?'Ищем заказы':'Выйти на линию';
   knob.textContent=online?'✓':'➜';
   const shiftIndicator=document.getElementById('shiftIndicator');
   shiftIndicator.classList.toggle('is-online',online);
   shiftIndicator.setAttribute('aria-label',online?'Завершить смену':'Смена не активна');
   knob.style.transform='';
-  showToast(online?'Ты вышел на линию (демо)':'Ты завершил смену (демо)');
+  clearTimeout(searchTimer);
+  if(online){
+    startOrderSearch();
+    showToast('Ты на линии — ищем заказы');
+  }else{
+    showToast('Ты завершил смену (демо)');
+  }
 }
 knob.addEventListener('pointerdown',e=>{
   if(online)return;
