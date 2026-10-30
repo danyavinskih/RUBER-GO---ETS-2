@@ -76,6 +76,34 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .toast{position:absolute;z-index:12;left:50%;bottom:calc(var(--nav-height) + 85px);transform:translateX(-50%);padding:10px 14px;background:#061a35ed;border:1px solid #4a8bd366;border-radius:12px;color:#eaf5ff;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media(max-width:370px){.sheet-body{padding-left:11px;padding-right:11px}.stat-value{font-size:17px}.tariff-card{padding:12px}.online{height:72px}.slider-knob{width:60px;height:60px}}
+
+.order-view{display:none;flex-direction:column;gap:13px;padding:4px 2px 12px;min-height:100%}
+.order-view.visible{display:flex}
+.order-top{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap}
+.skip-order{position:absolute;z-index:6;top:calc(env(safe-area-inset-top) + 16px);left:50%;transform:translateX(-50%);display:none;padding:10px 22px;border-radius:24px;background:rgba(255,255,255,.92);color:#092449;font-weight:800;font-size:15px;box-shadow:0 7px 24px #00152e30;border:1px solid #ffffffb8;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.skip-order.visible{display:block}
+.order-sheet{position:relative;overflow:hidden;background:linear-gradient(155deg,#fff,#f4f8ff);color:#10223c;border:1px solid #ffffffc9;border-radius:21px;padding:16px 15px 14px;box-shadow:0 10px 30px #00152e26}
+.order-distance-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.order-distance{font-size:31px;line-height:1;font-weight:900;letter-spacing:-1.1px;color:#087bff}
+.order-minutes{font-size:25px;font-weight:850;color:#10223c}
+.order-type{display:inline-flex;margin-top:9px;padding:7px 11px;border-radius:10px;background:#e8f2ff;color:#1769c7;font-size:12px;font-weight:800}
+.order-divider{height:1px;background:#dce5f0;margin:13px 0}
+.order-addresses{display:grid;gap:12px}
+.order-address{display:grid;grid-template-columns:32px 1fr;align-items:center;gap:11px;font-size:14px;font-weight:650;line-height:1.3}
+.order-letter{width:29px;height:29px;border:2px solid #087bff;border-radius:10px;display:grid;place-items:center;color:#087bff;font-size:16px;font-weight:900;background:#f5faff}
+.order-passenger{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:15px;font-weight:800}
+.passenger-label{display:flex;align-items:center;gap:9px}
+.passenger-icon{width:34px;height:34px;border-radius:12px;background:#eaf3ff;color:#087bff;display:grid;place-items:center;font-size:18px}
+.passenger-rating{font-size:16px;font-weight:900;color:#172b48;white-space:nowrap}
+.accept-order{width:100%;min-height:58px;border-radius:19px;background:linear-gradient(105deg,#087bff,#1769ed);color:#fff;font-size:18px;font-weight:900;letter-spacing:.1px;box-shadow:0 8px 22px #087bff45,inset 0 1px 0 #ffffff45;transition:transform .15s,filter .15s}
+.accept-order:active{transform:scale(.985);filter:brightness(.96)}
+.sheet.order-mode{height:auto;max-height:64vh;min-height:0;background:transparent;border:0;box-shadow:none;bottom:calc(var(--nav-height) + env(safe-area-inset-bottom) + 8px)}
+.sheet.order-mode .handle-area{display:none}
+.sheet.order-mode .sheet-body{padding:0 13px 8px;overflow:visible}
+.sheet.order-mode .default-view{display:none}
+.sheet.order-mode .order-view{display:flex}
+@media(max-height:700px){.sheet.order-mode{max-height:68vh}.order-sheet{padding:13px}.order-divider{margin:10px 0}.order-view{gap:10px}}
+
 </style>
 </head>
 <body>
@@ -107,12 +135,14 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
   </div>
   <button class="shift-indicator" id="shiftIndicator" aria-label="Завершить смену" title="Завершить смену"><span></span></button>
   <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
+  <button class="skip-order" id="skipOrder">Пропустить</button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
 
   <section class="sheet" id="sheet">
     <div class="handle-area" id="handleArea"><div class="handle"></div><div class="sheet-caption">ПОТЯНИ ВВЕРХ ИЛИ ВНИЗ</div></div>
     <div class="sheet-body">
+      <div class="default-view">
       <div class="stats">
         <div class="stat"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H20v14H6.5A2.5 2.5 0 0 1 4 16.5z"/><path d="M4 8h13M8 11h8M8 14h5"/></svg></div><div><div class="stat-label">Заказы</div><div class="stat-value" id="orders">0 заказов</div></div></div>
         <div class="stat"><div class="stat-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M15 8.5c-.7-.6-1.7-.9-2.8-.9-1.5 0-2.6.7-2.6 1.8 0 2.9 5.6 1.1 5.6 4 0 1.2-1.2 2-2.9 2-1.2 0-2.4-.4-3.2-1.1M12 5.5v13"/></svg></div><div><div class="stat-label">Баланс</div><div class="stat-value" id="balance">0 Руб</div></div></div>
@@ -125,6 +155,24 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
       <div class="online" id="onlineControl">
         <button class="slider-knob" id="sliderKnob" aria-label="Переключить статус">➜</button>
         <div class="online-copy"><strong class="online-headline" id="onlineText">Выйти на линию</strong></div>
+      </div>
+      </div>
+      <div class="order-view" id="orderView">
+        <div class="order-sheet">
+          <div class="order-distance-row"><span class="order-distance" id="orderDistance">700 м</span><span class="order-minutes" id="orderMinutes">· 4 мин</span></div>
+          <div class="order-type" id="orderType">Ближняя подача</div>
+          <div class="order-divider"></div>
+          <div class="order-addresses">
+            <div class="order-address"><span class="order-letter">А</span><span id="pickupAddress">Улица Мира, 12</span></div>
+            <div class="order-address"><span class="order-letter">Б</span><span id="dropoffAddress">Проспект Победы, 8</span></div>
+          </div>
+          <div class="order-divider"></div>
+          <div class="order-passenger">
+            <div class="passenger-label"><span class="passenger-icon">♙</span><span>Пассажир</span></div>
+            <span class="passenger-rating" id="passengerRating">★ 5.00</span>
+          </div>
+        </div>
+        <button class="accept-order" id="acceptOrder">Принять</button>
       </div>
     </div>
   </section>
@@ -198,22 +246,63 @@ shiftIndicator.addEventListener('click',()=>{
   else showToast('Чтобы выйти на линию, перетащи стрелку вправо');
 });
 let searchTimer=null;
+let orderVisible=false;
+const skipOrderButton=document.getElementById('skipOrder');
+const sheetElement=document.getElementById('sheet');
+const streetNames=['Студёный проезд, 18','Северодвинская улица, 19','Улица Мира, 12','Проспект Победы, 8','Лесная улица, 7','Центральная улица, 24','Садовая улица, 5','Набережная, 16'];
+function randomItem(items){return items[Math.floor(Math.random()*items.length)];}
+function showRandomOrder(){
+  const distances=[500,600,700,800,1000,1200,1500];
+  const distance=randomItem(distances);
+  const minutes=Math.max(2,Math.round(distance/230));
+  const type=distance<=800?'Ближняя подача':distance===1000?'Средняя подача':'Долгая подача';
+  let pickup=randomItem(streetNames),dropoff=randomItem(streetNames);
+  while(dropoff===pickup) dropoff=randomItem(streetNames);
+  document.getElementById('orderDistance').textContent=distance>=1000?(distance/1000).toFixed(distance%1000===0?0:1).replace('.',',')+' км':distance+' м';
+  document.getElementById('orderMinutes').textContent='· '+minutes+' мин';
+  document.getElementById('orderType').textContent=type;
+  document.getElementById('pickupAddress').textContent=pickup;
+  document.getElementById('dropoffAddress').textContent=dropoff;
+  document.getElementById('passengerRating').textContent='★ '+(4.7+Math.random()*.3).toFixed(2);
+  orderVisible=true;
+  document.getElementById('topOnlineStatus').classList.remove('visible');
+  skipOrderButton.classList.add('visible');
+  sheetElement.classList.add('order-mode');
+}
+function hideOrderAndSearchAgain(){
+  orderVisible=false;
+  skipOrderButton.classList.remove('visible');
+  sheetElement.classList.remove('order-mode');
+  document.getElementById('topOnlineStatus').classList.add('visible');
+  startOrderSearch();
+}
 function startOrderSearch(){
   clearTimeout(searchTimer);
-  // Имитация поиска: длительность каждого цикла случайная — от 10 до 60 секунд.
   const searchDuration=10000+Math.floor(Math.random()*50001);
   searchTimer=setTimeout(()=>{
-    if(online){
-      // Заказ пока не назначаем: поиск продолжается до следующего этапа приложения.
-      startOrderSearch();
-    }
+    if(online && !orderVisible) showRandomOrder();
   },searchDuration);
 }
+skipOrderButton.addEventListener('click',()=>{
+  if(!orderVisible)return;
+  showToast('Заказ пропущен');
+  hideOrderAndSearchAgain();
+});
+document.getElementById('acceptOrder').addEventListener('click',()=>{
+  if(!orderVisible)return;
+  clearTimeout(searchTimer);
+  orderVisible=false;
+  skipOrderButton.classList.remove('visible');
+  sheetElement.classList.remove('order-mode');
+  updateOnline(false);
+  showToast('Заказ принят — демо');
+});
 function updateOnline(value){
   online=value;
+  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode');}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
-  document.getElementById('topOnlineStatus').classList.toggle('visible',online);
+  document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
   document.getElementById('topOnlineStatus').classList.toggle('searching',online);
   document.getElementById('onlineText').textContent=online?'На линии':'Выйти на линию';
   knob.textContent=online?'✓':'➜';
