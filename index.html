@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>RUBER GO</title>
 <style>
-:root{--navy:#06152f;--panel:#102b54;--blue:#087bff;--blue2:#36aaff;--muted:#a9c0e2;--sheet:51vh}
+:root{--navy:#06152f;--panel:#102b54;--blue:#087bff;--blue2:#36aaff;--muted:#a9c0e2;--nav-height:76px}
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 html,body{width:100%;min-height:100%;background:#06152f;color:#fff}
 button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -43,18 +43,18 @@ input::placeholder{color:#7189ad}
 .map{position:absolute;inset:-3%;overflow:hidden;background:#e9e9e6;touch-action:pan-x pan-y}
 .map svg{width:100%;height:100%;display:block}
 .map:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#06152f24,transparent 22%,transparent 70%,#06152f14);pointer-events:none}
-.status{position:absolute;z-index:3;top:max(10px,env(safe-area-inset-top));left:22px;right:22px;display:flex;justify-content:space-between;color:#10213a;font-weight:750;text-shadow:0 1px 5px #fff}
 .brand{position:absolute;z-index:3;top:calc(env(safe-area-inset-top) + 42px);left:17px;padding:9px 13px;border-radius:13px;background:#071a36ef;box-shadow:0 5px 20px #00152e35;font-weight:900;letter-spacing:1px}
 .brand span{color:#44aaff}
 .locator{position:absolute;z-index:3;top:39%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px #0005)}
 .locator svg{width:54px;height:62px}
-.map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--sheet) + 15px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30;transition:bottom .25s}
-.sheet{position:absolute;z-index:5;left:0;right:0;bottom:0;height:var(--sheet);min-height:310px;max-height:88vh;border-radius:27px 27px 0 0;background:linear-gradient(155deg,#102b54,#081a36 90%);border:1px solid #65a8f344;border-bottom:0;box-shadow:0 -12px 35px #06152f35;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom);transition:height .25s ease}
-.sheet.expanded{height:84vh}
-.handle-area{padding:10px 20px 7px;flex:none;touch-action:none;cursor:grab}
+.map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--nav-height) + 18px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30}
+.sheet{position:absolute;z-index:5;left:0;right:0;bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));height:47vh;min-height:280px;max-height:80vh;border-radius:27px 27px 0 0;background:linear-gradient(155deg,#102b54,#081a36 90%);border:1px solid #65a8f344;border-bottom:0;box-shadow:0 -12px 35px #06152f35;display:flex;flex-direction:column;transition:transform .28s ease;transform:translateY(0)}
+.sheet.collapsed{transform:translateY(calc(100% - 38px))}
+.sheet.expanded{height:78vh}
+.handle-area{padding:10px 20px 7px;flex:none;touch-action:none;cursor:grab;user-select:none}
 .handle{width:43px;height:5px;margin:0 auto 7px;border-radius:9px;background:#83a9d188}
 .sheet-caption{text-align:center;color:#8eacd4;font-size:10px;letter-spacing:.5px}
-.sheet-body{padding:3px 16px 12px;overflow-y:auto;overscroll-behavior:contain;flex:1}
+.sheet-body{padding:3px 16px 12px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0}
 .stats{display:grid;grid-template-columns:1fr 1fr;background:#ffffff0b;border:1px solid #ffffff12;border-radius:17px;padding:13px 4px;margin-bottom:11px}
 .stat{display:flex;justify-content:center;align-items:center;gap:9px;min-width:0}
 .stat+.stat{border-left:1px solid #ffffff20}
@@ -71,8 +71,8 @@ input::placeholder{color:#7189ad}
 .slider-knob{width:64px;height:64px;flex:none;border-radius:18px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:33px;box-shadow:0 3px 12px #001b3b35;touch-action:none;cursor:grab}
 .online.online-now .slider-knob{color:#078b72}
 .online-copy{text-align:center;flex:1;padding-right:12px;line-height:1.25}.online-copy .state{font-size:12px;opacity:.9}.online-copy strong{display:block;font-size:16px}
-.nav{display:grid;grid-template-columns:repeat(4,1fr);padding:3px 0 0}
-.nav button{background:transparent;color:#8da9cf;display:flex;flex-direction:column;align-items:center;gap:4px;padding:5px 0;font-size:10px}
+.nav{position:absolute;z-index:7;left:0;right:0;bottom:0;height:calc(var(--nav-height) + env(safe-area-inset-bottom));padding:8px 5px max(8px,env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);background:linear-gradient(180deg,#0b2345,#06152f);border-top:1px solid #65a8f333;box-shadow:0 -8px 25px #00152e35}
+.nav button{background:transparent;color:#8da9cf;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:5px 0;font-size:10px}
 .nav button.active{color:#fff}.nav-icon{font-size:21px;line-height:1.1}.nav button.active .nav-icon{color:#55adff}
 .modal-backdrop{position:absolute;z-index:10;inset:0;background:#020b1bcc;display:none;align-items:flex-end;justify-content:center;padding:15px}
 .modal-backdrop.show{display:flex}
@@ -83,7 +83,7 @@ input::placeholder{color:#7189ad}
 .tariff-option{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:14px;margin-top:8px;border-radius:14px;color:white;background:#ffffff0c;border:1px solid #ffffff18}
 .tariff-option.selected{border-color:#329cff;background:#087bff24}
 .tariff-option strong{display:block;font-size:15px}.tariff-option small{display:block;color:#a9c0e2;margin-top:3px;font-size:11px}.check{color:#68baff;font-size:20px}
-.toast{position:absolute;z-index:12;left:50%;bottom:calc(var(--sheet) + 75px);transform:translateX(-50%);padding:10px 14px;background:#061a35ed;border:1px solid #4a8bd366;border-radius:12px;color:#eaf5ff;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast{position:absolute;z-index:12;left:50%;bottom:calc(var(--nav-height) + 85px);transform:translateX(-50%);padding:10px 14px;background:#061a35ed;border:1px solid #4a8bd366;border-radius:12px;color:#eaf5ff;font-size:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
 .toast.show{opacity:1}
 @media(max-width:370px){.sheet-body{padding-left:11px;padding-right:11px}.stat-value{font-size:17px}.tariff-card{padding:12px}.online{height:72px}.slider-knob{width:60px;height:60px}}
 </style>
@@ -160,7 +160,6 @@ input::placeholder{color:#7189ad}
       </g>
     </svg>
   </div>
-  <div class="status"><span id="clock">09:41</span><span>● ◔ ▰</span></div>
   <div class="brand"><span>●</span> RUBER GO</div>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
@@ -181,14 +180,14 @@ input::placeholder{color:#7189ad}
         <button class="slider-knob" id="sliderKnob" aria-label="Переключить статус">➜</button>
         <div class="online-copy"><span class="state" id="onlineState">Офлайн</span><strong id="onlineText">Выйти на линию</strong></div>
       </div>
-      <nav class="nav">
-        <button class="active" data-tab="Заказы"><span class="nav-icon">➤</span><span>Заказы</span></button>
-        <button data-tab="Деньги"><span class="nav-icon">▰</span><span>Деньги</span></button>
-        <button data-tab="Чаты"><span class="nav-icon">●</span><span>Чаты</span></button>
-        <button data-tab="Профиль"><span class="nav-icon">◉</span><span>Профиль</span></button>
-      </nav>
     </div>
   </section>
+  <nav class="nav">
+    <button class="active" data-tab="Заказы"><span class="nav-icon">➤</span><span>Заказы</span></button>
+    <button data-tab="Деньги"><span class="nav-icon">▰</span><span>Деньги</span></button>
+    <button data-tab="Чаты"><span class="nav-icon">●</span><span>Чаты</span></button>
+    <button data-tab="Профиль"><span class="nav-icon">◉</span><span>Профиль</span></button>
+  </nav>
 
   <div class="modal-backdrop" id="tariffModal">
     <div class="modal">
@@ -248,21 +247,29 @@ function openMainMenu(){
 }
 showStep();
 
-/* ЛОГИКА ШТОРКИ */
+/* ЛОГИКА ШТОРКИ: вниз до ручки, вверх до половины/расширения */
 const sheet=document.getElementById('sheet');
 const handleArea=document.getElementById('handleArea');
-let expanded=false,startY=0,dragging=false;
-function setSheet(open){
-  expanded=open;sheet.classList.toggle('expanded',open);
-  document.documentElement.style.setProperty('--sheet',open?'84vh':'51vh');
+let sheetStartY=0, sheetDragging=false;
+function setSheet(position){
+  sheet.classList.toggle('collapsed',position==='down');
+  sheet.classList.toggle('expanded',position==='up');
 }
-handleArea.addEventListener('pointerdown',e=>{startY=e.clientY;dragging=true;handleArea.setPointerCapture(e.pointerId);});
-handleArea.addEventListener('pointerup',e=>{
-  if(!dragging)return;const delta=e.clientY-startY;
-  if(delta < -35)setSheet(true);else if(delta>35)setSheet(false);else setSheet(!expanded);
-  dragging=false;
+handleArea.addEventListener('pointerdown',e=>{
+  sheetStartY=e.clientY;sheetDragging=true;
+  handleArea.setPointerCapture(e.pointerId);
 });
-handleArea.addEventListener('pointercancel',()=>dragging=false);
+handleArea.addEventListener('pointerup',e=>{
+  if(!sheetDragging)return;
+  const delta=e.clientY-sheetStartY;
+  if(delta>35)setSheet('down');
+  else if(delta< -35)setSheet('up');
+  else if(sheet.classList.contains('collapsed'))setSheet('half');
+  else if(sheet.classList.contains('expanded'))setSheet('half');
+  else setSheet('down');
+  sheetDragging=false;
+});
+handleArea.addEventListener('pointercancel',()=>sheetDragging=false);
 
 /* ВЫБОР ТАРИФА */
 const modal=document.getElementById('tariffModal');
@@ -278,8 +285,8 @@ document.querySelectorAll('.tariff-option').forEach(option=>{
   });
 });
 
-/* КНОПКА ВЫХОДА НА ЛИНИЮ */
-let online=false;
+/* ВЫХОД НА ЛИНИЮ: только перетаскиванием стрелки вправо */
+let online=false, knobDragging=false, knobStartX=0, knobOffset=0;
 const knob=document.getElementById('sliderKnob');
 const onlineControl=document.getElementById('onlineControl');
 function updateOnline(value){
@@ -287,9 +294,30 @@ function updateOnline(value){
   document.getElementById('onlineState').textContent=online?'На линии':'Офлайн';
   document.getElementById('onlineText').textContent=online?'Завершить смену':'Выйти на линию';
   knob.textContent=online?'✓':'➜';
+  knob.style.transform='';
   showToast(online?'Ты вышел на линию (демо)':'Ты завершил смену (демо)');
 }
-knob.addEventListener('click',()=>updateOnline(!online));
+knob.addEventListener('pointerdown',e=>{
+  if(online)return;
+  knobDragging=true;knobStartX=e.clientX;knobOffset=0;
+  knob.setPointerCapture(e.pointerId);
+});
+knob.addEventListener('pointermove',e=>{
+  if(!knobDragging)return;
+  const max=Math.max(0,onlineControl.clientWidth-knob.offsetWidth-12);
+  knobOffset=Math.max(0,Math.min(max,e.clientX-knobStartX));
+  knob.style.transform=`translateX(${knobOffset}px)`;
+});
+knob.addEventListener('pointerup',()=>{
+  if(!knobDragging)return;
+  const max=Math.max(1,onlineControl.clientWidth-knob.offsetWidth-12);
+  knobDragging=false;
+  if(knobOffset>=max*.72)updateOnline(true);
+  else knob.style.transform='';
+});
+knob.addEventListener('pointercancel',()=>{
+  knobDragging=false;knob.style.transform='';
+});
 
 /* ВСПОМОГАТЕЛЬНЫЕ ЭЛЕМЕНТЫ */
 function showToast(message){
@@ -304,10 +332,6 @@ document.querySelectorAll('.nav button').forEach(button=>{
     if(button.dataset.tab!=='Заказы')showToast('Раздел «'+button.dataset.tab+'» добавим следующим этапом');
   });
 });
-function updateClock(){
-  const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-}
-updateClock();setInterval(updateClock,30000);
 </script>
 </body>
 </html>
