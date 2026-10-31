@@ -33,7 +33,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .sheet{position:absolute;z-index:5;left:0;right:0;bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));height:47vh;min-height:280px;max-height:80vh;border-radius:27px 27px 0 0;background:linear-gradient(155deg,#102b54,#081a36 90%);border:1px solid #65a8f344;border-bottom:0;box-shadow:0 -12px 35px #06152f35;display:flex;flex-direction:column;transition:transform .28s ease;transform:translateY(0)}
 .sheet.collapsed{transform:translateY(calc(100% - 38px))}
 .sheet.expanded{height:78vh}
-.handle-area{padding:10px 20px 7px;flex:none;touch-action:none;cursor:grab;user-select:none}
+.handle-area{padding:10px 20px 7px;flex:none;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .handle{width:43px;height:5px;margin:0 auto 7px;border-radius:9px;background:#83a9d188}
 .sheet-caption{text-align:center;color:#8eacd4;font-size:10px;letter-spacing:.5px}
 .sheet-body{padding:3px 16px 12px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0}
@@ -197,14 +197,18 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 
 /* ЭКРАН АКТИВНОГО ЗАКАЗА — фирменный RUBER GO */
 .trip-view{display:none;flex-direction:column;gap:14px;padding:18px 18px 16px;min-height:100%;height:100%;color:#10233f}
-.sheet.trip-mode{height:clamp(300px,43vh,440px);min-height:285px;max-height:78vh;background:linear-gradient(180deg,#ffffff 0%,#f5f9ff 100%);border:1px solid #dce8f7;border-bottom:0;box-shadow:0 -14px 38px #06152f30;transform:none}
+.sheet.trip-mode{height:clamp(390px,59vh,590px);min-height:390px;max-height:82vh;bottom:0;background:linear-gradient(180deg,#ffffff 0%,#f5f9ff 100%);border:1px solid #dce8f7;border-bottom:0;box-shadow:0 -14px 38px #06152f30;transform:translateY(calc(100% - 54px));transition:transform .30s cubic-bezier(.2,.8,.2,1)}
+.sheet.trip-mode.trip-half{transform:translateY(36%)}
+.sheet.trip-mode.trip-full{transform:translateY(0)}
+.sheet.trip-mode .handle-area{padding:10px 20px 8px;min-height:34px}
+.sheet.trip-mode .handle{margin-bottom:0}
 .sheet.trip-mode .handle-area{display:block;padding:10px 20px 3px;touch-action:none}
 .sheet.trip-mode .handle{background:#c4d0df;width:42px;height:5px;margin-bottom:0}
 .sheet.trip-mode .sheet-caption{display:none}
 .sheet.trip-mode .sheet-body{display:flex;flex-direction:column;padding:0;overflow:hidden}
 .sheet.trip-mode .default-view,.sheet.trip-mode .order-view{display:none!important}
-.sheet.trip-mode .trip-view{display:flex;flex:1;min-height:0}
-.trip-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sheet.trip-mode .trip-view{display:flex;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+.trip-head{display:none;align-items:center;justify-content:space-between;gap:10px}
 .trip-title{font-size:20px;font-weight:850;letter-spacing:-.45px;color:#10233f}
 .trip-status{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:20px;background:#eaf4ff;color:#087bff;font-size:12px;font-weight:800;white-space:nowrap}
 .trip-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#1688ff;box-shadow:0 0 0 4px #1688ff20}
@@ -221,11 +225,24 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .arrival-knob{position:absolute;left:6px;top:6px;width:54px;height:54px;border-radius:17px;background:#fff;color:#087bff;display:grid;place-items:center;font-size:27px;box-shadow:0 3px 12px #002b5b35;touch-action:none;z-index:2;cursor:grab;transition:box-shadow .15s}
 .arrival-knob:active{box-shadow:0 5px 18px #002b5b55}
 .arrival-slider.done{background:linear-gradient(105deg,#0caa75,#0cbd86)}
+.trip-detail-block{display:grid;gap:11px;padding:0 2px}
+.trip-detail-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:10px}
+.trip-detail-row .trip-point.b{background:linear-gradient(145deg,#152d4c,#344d70)}
+.trip-detail-row .trip-time{font-size:12px;color:#6f8097}
+.trip-extra{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trip-info-tile{padding:12px;border-radius:16px;background:#f1f6fd;border:1px solid #e3ebf5}
+.trip-info-label{font-size:11px;color:#7d8da3;margin-bottom:5px}
+.trip-info-value{font-size:14px;font-weight:850;color:#142b49}
+.trip-price{font-size:20px;font-weight:900;color:#087bff}
+.cancel-trip{width:100%;min-height:48px;border-radius:16px;background:#fff1f2;color:#d83c4c;border:1px solid #ffd9de;font-size:15px;font-weight:850}
+.trip-map-marker{position:absolute;z-index:4;display:none;align-items:center;justify-content:center;width:38px;height:38px;border-radius:13px;background:#087bff;color:#fff;font-weight:900;border:3px solid #fff;box-shadow:0 5px 18px #00152e35}
+.trip-map-marker.a{top:42%;left:48%}.trip-map-marker.b{top:27%;left:67%;background:#142b49}
+.trip-map-marker.visible{display:flex}
 .trip-map-chip{position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 17px);left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px;padding:10px 15px;border-radius:18px;background:#ffffffed;color:#122a48;border:1px solid #e4edf8;box-shadow:0 7px 24px #00152e20;font-size:13px;font-weight:800;backdrop-filter:blur(16px)}
 .trip-map-chip.visible{display:flex}
 .trip-map-chip .mini-dot{width:8px;height:8px;border-radius:50%;background:#087bff}
 .sheet.dragging{transition:none!important}
-@media(max-height:700px){.sheet.trip-mode{height:48vh;min-height:280px}.trip-view{gap:10px;padding:13px 15px 12px}.trip-route-card{padding:10px 12px}.arrival-slider{height:60px}.arrival-knob{height:48px;width:48px}}
+@media(max-height:700px){.sheet.trip-mode{height:66vh;min-height:360px}.trip-view{gap:10px;padding:12px 15px 12px}.trip-route-card{padding:10px 12px}.arrival-slider{height:60px}.arrival-knob{height:48px;width:48px}}
 
 </style>
 </head>
@@ -261,7 +278,8 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
   <button class="skip-order" id="skipOrder">Пропустить</button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
-  <div class="trip-map-chip" id="tripMapChip"><span class="mini-dot"></span><span>Маршрут к пассажиру</span></div>
+  <div class="trip-map-chip" id="tripMapChip"><span class="mini-dot"></span><span>Маршрут поездки</span></div>
+  <div class="trip-map-marker a" id="tripMarkerA">A</div><div class="trip-map-marker b" id="tripMarkerB">Б</div>
 
   <section class="sheet" id="sheet">
     <div class="handle-area" id="handleArea"><div class="handle"></div><div class="sheet-caption">ПОТЯНИ ВВЕРХ ИЛИ ВНИЗ</div></div>
@@ -299,9 +317,16 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
         <button class="accept-order" id="acceptOrder">Принять</button>
       </div>
       <div class="trip-view" id="tripView">
-        <div class="trip-head"><div class="trip-title">Едем к пассажиру</div><div class="trip-status">В пути</div></div>
-        <div class="trip-route-card"><span class="trip-point">A</span><div><div class="trip-address" id="tripPickup">Студёный проезд, 18</div><div class="trip-sub">Адрес подачи · пассажир</div></div><div class="trip-time" id="tripEta">00:45</div></div>
-        <div class="trip-meta"><span>До места подачи</span><strong id="tripDistance">700 м · 4 мин</strong></div>
+        <div class="trip-detail-block">
+          <div class="trip-detail-row"><span class="trip-point">A</span><div><div class="trip-address" id="tripPickup">Студёный проезд, 18</div><div class="trip-sub">Подача · пассажир</div></div><div class="trip-time" id="tripEta">00:45</div></div>
+          <div class="trip-detail-row"><span class="trip-point b">Б</span><div><div class="trip-address" id="tripDropoff">Проспект Победы, 8</div><div class="trip-sub">Точка назначения</div></div><div class="trip-time">Конец</div></div>
+        </div>
+        <div class="trip-meta"><span>До пассажира</span><strong id="tripDistance">700 м · 4 мин</strong></div>
+        <div class="trip-extra">
+          <div class="trip-info-tile"><div class="trip-info-label">Оплата</div><div class="trip-info-value" id="tripPayment">Картой</div></div>
+          <div class="trip-info-tile"><div class="trip-info-label">Стоимость поездки</div><div class="trip-price" id="tripPrice">450 ₽</div></div>
+        </div>
+        <button class="cancel-trip" id="cancelTrip">Отменить заказ</button>
         <div class="arrival-slider" id="arrivalSlider"><span class="arrival-label" id="arrivalLabel">На месте</span><button class="arrival-knob" id="arrivalKnob" aria-label="Отметить прибытие"><svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
       </div>
       </div>
@@ -333,13 +358,24 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 const sheet=document.getElementById('sheet');
 const handleArea=document.getElementById('handleArea');
 let sheetStartY=0,sheetBaseY=0,sheetDragging=false,sheetCurrentY=0;
-function collapsedOffset(){return Math.max(0,sheet.offsetHeight-42)}
+function collapsedOffset(){return Math.max(0,sheet.offsetHeight-54)}
 function setSheet(position){
-  sheet.classList.remove('collapsed','expanded');
+  sheet.classList.remove('collapsed','expanded','trip-half','trip-full');
+  if(sheet.classList.contains('trip-mode')){
+    if(position==='down'){} else if(position==='half')sheet.classList.add('trip-half'); else sheet.classList.add('trip-full');
+    sheet.style.transform='';
+    sheetCurrentY=position==='down'?collapsedOffset():position==='half'?sheet.offsetHeight*.36:0;
+    updateTripMarkers(position);
+    return;
+  }
   if(position==='down')sheet.classList.add('collapsed');
   if(position==='up')sheet.classList.add('expanded');
-  sheet.style.transform='';
-  sheetCurrentY=position==='down'?collapsedOffset():0;
+  sheet.style.transform='';sheetCurrentY=position==='down'?collapsedOffset():0;
+}
+function updateTripMarkers(position){
+  const a=document.getElementById('tripMarkerA'),b=document.getElementById('tripMarkerB');
+  if(!a||!b)return;
+  a.classList.toggle('visible',true);b.classList.toggle('visible',position!=='down');
 }
 function sheetPointerDown(e){
   if(e.target.closest('button') && !e.target.closest('.handle-area'))return;
@@ -350,12 +386,12 @@ function sheetPointerDown(e){
 }
 function sheetPointerMove(e){
   if(!sheetDragging)return;
-  const max=collapsedOffset();sheetCurrentY=Math.max(0,Math.min(max,sheetBaseY+e.clientY-sheetStartY));
+  const max=collapsedOffset();const min=sheet.classList.contains('trip-mode')?-sheet.offsetHeight*.0:0;sheetCurrentY=Math.max(min,Math.min(max,sheetBaseY+e.clientY-sheetStartY));
   sheet.style.transform=`translateY(${sheetCurrentY}px)`;
 }
 function sheetPointerUp(){
   if(!sheetDragging)return;sheetDragging=false;sheet.classList.remove('dragging');
-  const threshold=collapsedOffset()*.42;setSheet(sheetCurrentY>threshold?'down':'up');
+  if(sheet.classList.contains('trip-mode')){const h=sheet.offsetHeight;setSheet(sheetCurrentY>h*.55?'down':sheetCurrentY>h*.18?'half':'up');}else{const threshold=collapsedOffset()*.42;setSheet(sheetCurrentY>threshold?'down':'up');}
 }
 handleArea.addEventListener('pointerdown',sheetPointerDown);
 handleArea.addEventListener('pointermove',sheetPointerMove);
@@ -448,11 +484,25 @@ document.getElementById('acceptOrder').addEventListener('click',()=>{
   sheetElement.classList.remove('order-mode','collapsed','expanded');
   sheetElement.classList.add('trip-mode');sheetElement.style.transform='';
   document.getElementById('tripPickup').textContent=document.getElementById('pickupAddress').textContent;
+  document.getElementById('tripDropoff').textContent=document.getElementById('dropoffAddress').textContent;
+  document.getElementById('tripPayment').textContent=Math.random()<.65?'Картой':'Наличными';
+  document.getElementById('tripPrice').textContent=(350+Math.floor(Math.random()*301/10)*10)+' ₽';
+  setSheet('down');
   document.getElementById('tripDistance').textContent=document.getElementById('orderDistance').textContent+' · '+document.getElementById('orderMinutes').textContent.replace('· ','');
   document.getElementById('tripEta').textContent='00:45';
   document.getElementById('tripMapChip').classList.add('visible');
+  document.getElementById('tripMarkerA').classList.add('visible');document.getElementById('tripMarkerB').classList.remove('visible');
   document.getElementById('topOnlineStatus').classList.remove('visible');
   showToast('Заказ принят — направляйся к пассажиру');
+});
+document.getElementById('cancelTrip').addEventListener('click',()=>{
+  if(!sheetElement.classList.contains('trip-mode'))return;
+  sheetElement.classList.remove('trip-mode','trip-half','trip-full');sheetElement.style.transform='';
+  document.getElementById('tripMapChip').classList.remove('visible');
+  document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');
+  arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';
+  document.querySelector('.trip-status').textContent='В пути';showToast('Заказ отменён (демо)');
+  if(online)startOrderSearch();
 });
 // Демонстрационный ползунок «На месте» — плавно перетаскивается вправо.
 const arrivalSlider=document.getElementById('arrivalSlider'),arrivalKnob=document.getElementById('arrivalKnob');
@@ -464,7 +514,7 @@ function finishArrival(){if(!arrivalDragging)return;arrivalDragging=false;const 
 arrivalKnob.addEventListener('pointerup',finishArrival);arrivalKnob.addEventListener('pointercancel',finishArrival);
 function updateOnline(value){
   online=value;
-  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode');document.getElementById('tripMapChip').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
+  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
   document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
