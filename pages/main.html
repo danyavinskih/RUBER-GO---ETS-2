@@ -27,6 +27,13 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .shift-indicator span{width:22px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0004;transition:transform .2s}
 .shift-indicator.is-online{background:linear-gradient(135deg,#087bff,#36aaff);box-shadow:0 5px 20px #087bff55,inset 0 1px 2px #ffffff55}
 .shift-indicator.is-online span{transform:translateX(24px)}
+.shift-indicator{display:none}
+.shift-indicator.visible{display:flex}
+.trip-pickup-distance{position:absolute;z-index:9;top:calc(env(safe-area-inset-top) + 16px);left:16px;display:none;align-items:center;gap:10px;padding:9px 15px 9px 11px;border-radius:15px;background:linear-gradient(135deg,#087bff,#1769ed);border:1px solid #ffffff65;box-shadow:0 7px 22px #006eff45;color:#fff;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);font-size:19px;font-weight:850;letter-spacing:-.35px;font-variant-numeric:tabular-nums}
+.trip-pickup-distance.visible{display:flex;animation:pickupBadgeIn .28s ease both}
+.pickup-flag{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;background:#ffffff22}
+.pickup-flag svg{width:23px;height:23px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@keyframes pickupBadgeIn{from{opacity:0;transform:translateY(-7px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 .locator{position:absolute;z-index:3;top:39%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 4px 5px #0005)}
 .locator svg{width:54px;height:62px}
 .map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--nav-height) + 18px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30}
@@ -197,7 +204,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 
 /* ЭКРАН АКТИВНОГО ЗАКАЗА — фирменный RUBER GO */
 .trip-view{display:none;flex-direction:column;gap:14px;padding:18px 18px 16px;min-height:100%;height:100%;color:#10233f}
-.sheet.trip-mode{height:clamp(390px,59vh,590px);min-height:390px;max-height:82vh;bottom:0;background:linear-gradient(180deg,#ffffff 0%,#f5f9ff 100%);border:1px solid #dce8f7;border-bottom:0;box-shadow:0 -14px 38px #06152f30;transform:translateY(calc(100% - 54px));transition:transform .30s cubic-bezier(.2,.8,.2,1)}
+.sheet.trip-mode{height:clamp(390px,59vh,590px);min-height:390px;max-height:82vh;bottom:0;background:linear-gradient(180deg,#ffffff 0%,#f5f9ff 100%);border:1px solid #dce8f7;border-bottom:0;box-shadow:0 -14px 38px #06152f30;transform:translateY(calc(100% - 34px));transition:transform .30s cubic-bezier(.2,.8,.2,1)}
 .sheet.trip-mode.trip-half{transform:translateY(36%)}
 .sheet.trip-mode.trip-full{transform:translateY(0)}
 .sheet.trip-mode .handle-area{padding:10px 20px 8px;min-height:34px}
@@ -238,8 +245,9 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .trip-map-marker{position:absolute;z-index:4;display:none;align-items:center;justify-content:center;width:38px;height:38px;border-radius:13px;background:#087bff;color:#fff;font-weight:900;border:3px solid #fff;box-shadow:0 5px 18px #00152e35}
 .trip-map-marker.a{top:42%;left:48%}.trip-map-marker.b{top:27%;left:67%;background:#142b49}
 .trip-map-marker.visible{display:flex}
-.trip-map-chip{position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 17px);left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px;padding:10px 15px;border-radius:18px;background:#ffffffed;color:#122a48;border:1px solid #e4edf8;box-shadow:0 7px 24px #00152e20;font-size:13px;font-weight:800;backdrop-filter:blur(16px)}
+.trip-map-chip{display:none!important;position:absolute;z-index:4;top:calc(env(safe-area-inset-top) + 17px);left:50%;transform:translateX(-50%);display:none;align-items:center;gap:8px;padding:10px 15px;border-radius:18px;background:#ffffffed;color:#122a48;border:1px solid #e4edf8;box-shadow:0 7px 24px #00152e20;font-size:13px;font-weight:800;backdrop-filter:blur(16px)}
 .trip-map-chip.visible{display:flex}
+.sheet.trip-mode ~ #tripMapChip{display:none}
 .trip-map-chip .mini-dot{width:8px;height:8px;border-radius:50%;background:#087bff}
 .sheet.dragging{transition:none!important}
 @media(max-height:700px){.sheet.trip-mode{height:66vh;min-height:360px}.trip-view{gap:10px;padding:12px 15px 12px}.trip-route-card{padding:10px 12px}.arrival-slider{height:60px}.arrival-knob{height:48px;width:48px}}
@@ -247,7 +255,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 
 
 /* Плавающая шкала навигации: прикреплена к шторке и движется вместе с ней */
-.trip-progress-float{position:absolute;left:14px;right:14px;top:-116px;z-index:12;display:none;flex-direction:column;gap:8px;pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+.trip-progress-float{position:absolute;left:14px;right:14px;top:-140px;z-index:12;display:none;flex-direction:column;gap:8px;pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
 .sheet.trip-mode .trip-progress-float{display:flex;}
 .trip-street-pill{align-self:center;display:flex;align-items:center;gap:9px;max-width:calc(100% - 24px);padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid rgba(224,234,246,.95);box-shadow:0 7px 22px rgba(10,35,65,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#142b49;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .trip-street-icon{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:8px;background:#eaf4ff;color:#087bff;}
@@ -258,12 +266,13 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .trip-progress-stats strong:last-child{color:#087bff;}
 .trip-progress-track{height:8px;position:relative;margin:0 5px;border-radius:99px;background:#e9eff6;overflow:visible;}
 .trip-progress-muted{position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,#e9eff6,#dfeaf7);}
-.trip-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:99px;background:linear-gradient(90deg,#45a5ff,#087bff 70%,#16b987);transform-origin:left;}
+.trip-progress-fill{position:absolute;left:0;top:0;bottom:0;width:0%;border-radius:99px;background:linear-gradient(90deg,#45a5ff,#087bff);transform-origin:left;animation:tripProgressFill 24s cubic-bezier(.35,.05,.25,1) infinite alternate;}
 .trip-progress-arrow{position:absolute;top:50%;left:0;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#fff;border:2px solid #087bff;box-shadow:0 2px 8px #0b4e8d35;transform:translate(-50%,-50%);animation:tripProgressMove 24s cubic-bezier(.35,.05,.25,1) infinite alternate;}
 .trip-progress-arrow svg{width:14px;height:14px;fill:#087bff;}
 .trip-progress-end{position:absolute;right:-1px;top:50%;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid #16b987;transform:translate(50%,-50%);}
 @keyframes tripProgressMove{0%{left:0%}100%{left:100%}}
-@media(max-width:390px){.trip-progress-float{left:10px;right:10px;top:-110px}.trip-progress-card{padding:10px 13px 12px}.trip-progress-stats{font-size:15px;margin-bottom:10px}.trip-street-pill{font-size:13px;padding:8px 14px}}
+@keyframes tripProgressFill{0%{width:0%}100%{width:100%}}
+@media(max-width:390px){.trip-progress-float{left:10px;right:10px;top:-134px}.trip-progress-card{padding:10px 13px 12px}.trip-progress-stats{font-size:15px;margin-bottom:10px}.trip-street-pill{font-size:13px;padding:8px 14px}}
 @media(prefers-reduced-motion:reduce){.trip-progress-arrow{animation-duration:60s}}
 
 /* Активная поездка: нижняя навигация не перекрывает ручку шторки */
@@ -304,6 +313,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
     </svg>
   </div>
   <button class="shift-indicator" id="shiftIndicator" aria-label="Завершить смену" title="Завершить смену"><span></span></button>
+  <div class="trip-pickup-distance" id="tripPickupDistance" aria-label="Осталось до пассажира 30 метров"><span class="pickup-flag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4m1 1h12l-3 4 3 4H6"/><path d="M9 6v3h3V6zm3 3v3h3V9z"/></svg></span><strong id="tripPickupMeters">30 м</strong></div>
   <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
   <button class="skip-order" id="skipOrder">Пропустить</button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
@@ -395,7 +405,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 const sheet=document.getElementById('sheet');
 const handleArea=document.getElementById('handleArea');
 let sheetStartY=0,sheetBaseY=0,sheetDragging=false,sheetCurrentY=0;
-function collapsedOffset(){return Math.max(0,sheet.offsetHeight-54)}
+function collapsedOffset(){return Math.max(0,sheet.offsetHeight-(sheet.classList.contains('trip-mode')?34:54))}
 function setSheet(position){
   sheet.classList.remove('collapsed','expanded','trip-half','trip-full');
   if(sheet.classList.contains('trip-mode')){
@@ -481,6 +491,7 @@ function showRandomOrder(distance){
   document.getElementById('dropoffAddress').textContent=dropoff;
   document.getElementById('passengerRating').textContent='★ '+(4.7+Math.random()*.3).toFixed(2);
   orderVisible=true;
+  document.getElementById('shiftIndicator').classList.remove('visible');
   document.getElementById('topOnlineStatus').classList.remove('visible');
   skipOrderButton.classList.add('visible');
   sheetElement.classList.add('order-mode');
@@ -491,6 +502,7 @@ function hideOrderAndSearchAgain(){
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode');sheetElement.style.transform='';sheetElement.classList.remove('collapsed','expanded');
   document.getElementById('topOnlineStatus').classList.add('visible');
+  document.getElementById('shiftIndicator').classList.toggle('visible',online);
   startOrderSearch();
 }
 function startOrderSearch(){
@@ -514,12 +526,27 @@ skipOrderButton.addEventListener('click',()=>{
   showToast('Заказ пропущен');
   hideOrderAndSearchAgain();
 });
+let pickupDistanceTimer=null;
+function startPickupDistanceDemo(){
+  clearInterval(pickupDistanceTimer);let meters=30;
+  const label=document.getElementById('tripPickupMeters');
+  label.textContent=meters+' м';
+  pickupDistanceTimer=setInterval(()=>{
+    if(!sheetElement.classList.contains('trip-mode')){clearInterval(pickupDistanceTimer);return;}
+    meters=Math.max(0,meters-1);label.textContent=meters+' м';
+    document.getElementById('tripPickupDistance').setAttribute('aria-label','Осталось до пассажира '+meters+' метров');
+    if(meters===0)clearInterval(pickupDistanceTimer);
+  },1800);
+}
 document.getElementById('acceptOrder').addEventListener('click',()=>{
   if(!orderVisible)return;
   clearTimeout(searchTimer);orderVisible=false;
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode','collapsed','expanded');
   sheetElement.classList.add('trip-mode');sheetElement.style.transform='';
+  document.getElementById('shiftIndicator').classList.remove('visible');
+  document.getElementById('tripPickupDistance').classList.add('visible');
+  startPickupDistanceDemo();
   document.getElementById('tripPickup').textContent=document.getElementById('pickupAddress').textContent;
   const pickupStreet=document.getElementById('pickupAddress').textContent.split(',')[0].trim();
   document.getElementById('tripStreetName').textContent=pickupStreet || 'Маршрут поездки';
@@ -538,6 +565,9 @@ document.getElementById('acceptOrder').addEventListener('click',()=>{
 document.getElementById('cancelTrip').addEventListener('click',()=>{
   if(!sheetElement.classList.contains('trip-mode'))return;
   sheetElement.classList.remove('trip-mode','trip-half','trip-full');sheetElement.style.transform='';
+  document.getElementById('tripPickupDistance').classList.remove('visible');
+  clearInterval(pickupDistanceTimer);
+  document.getElementById('shiftIndicator').classList.toggle('visible',online && !orderVisible);
   document.getElementById('tripMapChip').classList.remove('visible');
   document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');
   document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');
@@ -555,7 +585,7 @@ function finishArrival(){if(!arrivalDragging)return;arrivalDragging=false;const 
 arrivalKnob.addEventListener('pointerup',finishArrival);arrivalKnob.addEventListener('pointercancel',finishArrival);
 function updateOnline(value){
   online=value;
-  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
+  if(!online){clearInterval(pickupDistanceTimer);document.getElementById('tripPickupDistance').classList.remove('visible');document.getElementById('shiftIndicator').classList.remove('visible');orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
   document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
@@ -564,6 +594,7 @@ function updateOnline(value){
   knob.textContent=online?'✓':'➜';
   const shiftIndicator=document.getElementById('shiftIndicator');
   shiftIndicator.classList.toggle('is-online',online);
+  shiftIndicator.classList.toggle('visible',online && !orderVisible && !sheetElement.classList.contains('trip-mode'));
   shiftIndicator.setAttribute('aria-label',online?'Завершить смену':'Смена не активна');
   knob.style.transform='';
   clearTimeout(searchTimer);
