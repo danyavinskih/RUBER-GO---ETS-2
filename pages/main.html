@@ -114,7 +114,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .sheet.order-mode{
   position:absolute;
   left:0;right:0;bottom:0;
-  height:46vh;min-height:390px;max-height:560px;
+  height:44vh;min-height:370px;max-height:540px;
   background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
   border:1px solid rgba(15,91,170,.10);border-bottom:0;
   border-radius:27px 27px 0 0;
@@ -164,8 +164,10 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .sheet.order-mode .passenger-label{display:flex;align-items:center;gap:10px}
 .sheet.order-mode .passenger-icon{
   width:37px;height:37px;border-radius:12px;display:grid;place-items:center;
-  background:#102b4b;color:#fff;font-size:20px;
+  background:linear-gradient(145deg,#1685ff,#0868e8);color:#fff;
+  box-shadow:0 5px 13px rgba(8,123,255,.22);
 }
+.sheet.order-mode .passenger-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .sheet.order-mode .passenger-rating{font-size:18px;font-weight:900;color:#172b45;white-space:nowrap}
 .sheet.order-mode .accept-order{
   flex:none;width:calc(100% - 40px);min-height:62px;margin:0 20px 18px;
@@ -185,7 +187,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 }
 .sheet.order-mode ~ .nav{display:none}
 @media(max-height:700px){
-  .sheet.order-mode{height:49vh;min-height:350px;max-height:560px}
+  .sheet.order-mode{height:47vh;min-height:340px;max-height:540px}
   .sheet.order-mode .order-sheet{padding:15px 19px 6px}
   .sheet.order-mode .order-divider{margin:11px 0}
   .sheet.order-mode .order-addresses{gap:10px}
@@ -256,7 +258,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
           </div>
           <div class="order-divider"></div>
           <div class="order-passenger">
-            <div class="passenger-label"><span class="passenger-icon">♙</span><span>Пассажир</span></div>
+            <div class="passenger-label"><span class="passenger-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c.55-3.45 2.85-5.2 6.5-5.2s5.95 1.75 6.5 5.2"/></svg></span><span>Пассажир</span></div>
             <span class="passenger-rating" id="passengerRating">★ 5.00</span>
           </div>
         </div>
@@ -335,13 +337,17 @@ shiftIndicator.addEventListener('click',()=>{
 });
 let searchTimer=null;
 let orderVisible=false;
+let searchTier=0;
 const skipOrderButton=document.getElementById('skipOrder');
 const sheetElement=document.getElementById('sheet');
 const streetNames=['Студёный проезд, 18','Северодвинская улица, 19','Улица Мира, 12','Проспект Победы, 8','Лесная улица, 7','Центральная улица, 24','Садовая улица, 5','Набережная, 16'];
+const orderDistanceTiers=[
+  {distances:[500,600,700,800],chance:0.65},
+  {distances:[1000],chance:0.75},
+  {distances:[1200,1500],chance:1}
+];
 function randomItem(items){return items[Math.floor(Math.random()*items.length)];}
-function showRandomOrder(){
-  const distances=[500,600,700,800,1000,1200,1500];
-  const distance=randomItem(distances);
+function showRandomOrder(distance){
   const minutes=Math.max(2,Math.round(distance/230));
   const type=distance<=800?'Ближняя подача':distance===1000?'Средняя подача':'Долгая подача';
   let pickup=randomItem(streetNames),dropoff=randomItem(streetNames);
@@ -359,6 +365,7 @@ function showRandomOrder(){
 }
 function hideOrderAndSearchAgain(){
   orderVisible=false;
+  searchTier=0;
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode');
   document.getElementById('topOnlineStatus').classList.add('visible');
@@ -366,10 +373,19 @@ function hideOrderAndSearchAgain(){
 }
 function startOrderSearch(){
   clearTimeout(searchTimer);
-  const searchDuration=10000+Math.floor(Math.random()*50001);
+  if(!online || orderVisible)return;
+  if(searchTier>=orderDistanceTiers.length)searchTier=0;
+  const tier=orderDistanceTiers[searchTier];
+  // Временный интервал 5 секунд для тестирования поиска.
   searchTimer=setTimeout(()=>{
-    if(online && !orderVisible) showRandomOrder();
-  },searchDuration);
+    if(!online || orderVisible)return;
+    if(Math.random()<=tier.chance){
+      showRandomOrder(randomItem(tier.distances));
+    }else{
+      searchTier++;
+      startOrderSearch();
+    }
+  },5000);
 }
 skipOrderButton.addEventListener('click',()=>{
   if(!orderVisible)return;
