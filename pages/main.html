@@ -244,6 +244,13 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .sheet.dragging{transition:none!important}
 @media(max-height:700px){.sheet.trip-mode{height:66vh;min-height:360px}.trip-view{gap:10px;padding:12px 15px 12px}.trip-route-card{padding:10px 12px}.arrival-slider{height:60px}.arrival-knob{height:48px;width:48px}}
 
+
+/* Активная поездка: нижняя навигация не перекрывает ручку шторки */
+.sheet.trip-mode ~ .nav{display:none!important}
+.sheet.trip-mode{z-index:8}
+#tripRouteLine.active{opacity:1;filter:drop-shadow(0 2px 5px #087bff55)}
+#tripRouteGlow.active{opacity:.28}
+
 </style>
 </head>
 <body>
@@ -253,7 +260,9 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
   <div class="map" id="map">
     <!-- Временная схематичная карта. Позже подключим карту ETS2. -->
     <svg viewBox="0 0 430 900" preserveAspectRatio="xMidYMid slice" aria-label="Временная карта">
-      <rect width="430" height="900" fill="#efefec"/>
+      <path id="tripRouteLine" d="M207 405 C220 365 265 340 290 300 S330 245 330 205" fill="none" stroke="#087bff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 0" opacity="0"/>
+      <path id="tripRouteGlow" d="M207 405 C220 365 265 340 290 300 S330 245 330 205" fill="none" stroke="#087bff" stroke-width="17" stroke-linecap="round" stroke-linejoin="round" opacity="0" filter="url(#routeGlow)"/>
+      <defs><filter id="routeGlow"><feGaussianBlur stdDeviation="5"/></filter></defs><rect width="430" height="900" fill="#efefec"/>
       <g fill="#e2e3e1" opacity=".8">
         <path d="M0 35h105v80H0zM130 10h100v100H130zM260 0h130v85H260zM15 160h95v90H15zM140 145h105v95H140zM280 130h130v105H280zM0 300h110v90H0zM140 285h110v105H140zM280 280h130v100H280zM15 440h100v105H15zM145 430h105v105H145zM280 420h120v115H280zM0 590h115v100H0zM140 575h110v110H140zM280 570h130v105H280zM15 735h105v100H15zM150 720h100v110H150zM285 720h120v100H285z"/>
       </g>
@@ -491,6 +500,7 @@ document.getElementById('acceptOrder').addEventListener('click',()=>{
   document.getElementById('tripDistance').textContent=document.getElementById('orderDistance').textContent+' · '+document.getElementById('orderMinutes').textContent.replace('· ','');
   document.getElementById('tripEta').textContent='00:45';
   document.getElementById('tripMapChip').classList.add('visible');
+  document.getElementById('tripRouteLine').classList.add('active');document.getElementById('tripRouteGlow').classList.add('active');
   document.getElementById('tripMarkerA').classList.add('visible');document.getElementById('tripMarkerB').classList.remove('visible');
   document.getElementById('topOnlineStatus').classList.remove('visible');
   showToast('Заказ принят — направляйся к пассажиру');
@@ -499,6 +509,7 @@ document.getElementById('cancelTrip').addEventListener('click',()=>{
   if(!sheetElement.classList.contains('trip-mode'))return;
   sheetElement.classList.remove('trip-mode','trip-half','trip-full');sheetElement.style.transform='';
   document.getElementById('tripMapChip').classList.remove('visible');
+  document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');
   document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');
   arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';
   document.querySelector('.trip-status').textContent='В пути';showToast('Заказ отменён (демо)');
@@ -514,7 +525,7 @@ function finishArrival(){if(!arrivalDragging)return;arrivalDragging=false;const 
 arrivalKnob.addEventListener('pointerup',finishArrival);arrivalKnob.addEventListener('pointercancel',finishArrival);
 function updateOnline(value){
   online=value;
-  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
+  if(!online){orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
   document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
