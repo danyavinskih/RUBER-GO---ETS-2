@@ -39,6 +39,17 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .map-recenter{position:absolute;z-index:4;right:17px;bottom:calc(var(--nav-height) + 18px);width:45px;height:45px;border-radius:50%;background:#fff;color:#102b50;font-size:22px;box-shadow:0 4px 18px #00152e30}
 .sheet{position:absolute;z-index:5;left:0;right:0;bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));height:47vh;min-height:280px;max-height:80vh;border-radius:27px 27px 0 0;background:linear-gradient(155deg,#102b54,#081a36 90%);border:1px solid #65a8f344;border-bottom:0;box-shadow:0 -12px 35px #06152f35;display:flex;flex-direction:column;transition:transform .28s ease;transform:translateY(0)}
 .sheet.collapsed{transform:translateY(calc(100% - 38px))}
+.sheet.search-mode{height:56vh;min-height:300px;max-height:68vh;bottom:calc(var(--nav-height) + env(safe-area-inset-bottom));background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #dce8f7;border-bottom:0;box-shadow:0 -12px 35px #06152f25}
+.sheet.search-mode.search-half{transform:translateY(27%)}
+.sheet.search-mode.collapsed{transform:translateY(calc(100% - 42px))}
+.sheet.search-mode .handle{background:#b8c8dc}
+.sheet.search-mode .sheet-caption{color:#8294aa}
+.sheet.search-mode .sheet-body{color:#10223c}
+.skip-order{display:none;flex-direction:column;align-items:center;gap:3px;min-width:150px;padding:9px 23px 10px}
+.skip-order.visible{display:flex}
+.skip-countdown{font-size:12px;font-weight:850;line-height:1;color:#087bff;font-variant-numeric:tabular-nums;letter-spacing:.1px}
+.skip-label{font-size:14px;font-weight:850;line-height:1.2}
+
 .sheet.expanded{height:78vh}
 .handle-area{padding:10px 20px 7px;flex:none;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .handle{width:43px;height:5px;margin:0 auto 7px;border-radius:9px;background:#83a9d188}
@@ -331,7 +342,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
     <div class="speed-disc"><span class="speed-number" id="speedLimit">60</span><span class="speed-unit">ЛИМИТ</span></div>
   </div>
   <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
-  <button class="skip-order" id="skipOrder">Пропустить</button>
+  <button class="skip-order" id="skipOrder"><span class="skip-countdown" id="skipCountdown">10 сек</span><span class="skip-label">Пропустить</span></button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
   <div class="trip-map-chip" id="tripMapChip"><span class="mini-dot"></span><span>Маршрут поездки</span></div>
@@ -423,12 +434,20 @@ const handleArea=document.getElementById('handleArea');
 let sheetStartY=0,sheetBaseY=0,sheetDragging=false,sheetCurrentY=0;
 function collapsedOffset(){return Math.max(0,sheet.offsetHeight-(sheet.classList.contains('trip-mode')?34:54))}
 function setSheet(position){
-  sheet.classList.remove('collapsed','expanded','trip-half','trip-full');
+  sheet.classList.remove('collapsed','expanded','search-half','trip-half','trip-full');
   if(sheet.classList.contains('trip-mode')){
     if(position==='down'){} else if(position==='half')sheet.classList.add('trip-half'); else sheet.classList.add('trip-full');
     sheet.style.transform='';
     sheetCurrentY=position==='down'?collapsedOffset():position==='half'?sheet.offsetHeight*.36:0;
     updateTripMarkers(position);
+    return;
+  }
+  if(sheet.classList.contains('search-mode')){
+    if(position==='down')sheet.classList.add('collapsed');
+    else if(position==='half')sheet.classList.add('search-half');
+    else sheet.classList.add('expanded');
+    sheet.style.transform='';
+    sheetCurrentY=position==='down'?collapsedOffset():position==='half'?sheet.offsetHeight*.27:0;
     return;
   }
   if(position==='down')sheet.classList.add('collapsed');
@@ -454,7 +473,9 @@ function sheetPointerMove(e){
 }
 function sheetPointerUp(){
   if(!sheetDragging)return;sheetDragging=false;sheet.classList.remove('dragging');
-  if(sheet.classList.contains('trip-mode')){const h=sheet.offsetHeight;setSheet(sheetCurrentY>h*.55?'down':sheetCurrentY>h*.18?'half':'up');}else{const threshold=collapsedOffset()*.42;setSheet(sheetCurrentY>threshold?'down':'up');}
+  if(sheet.classList.contains('trip-mode')){const h=sheet.offsetHeight;setSheet(sheetCurrentY>h*.55?'down':sheetCurrentY>h*.18?'half':'up');}
+  else if(sheet.classList.contains('search-mode')){const h=sheet.offsetHeight;setSheet(sheetCurrentY>collapsedOffset()*.72?'down':sheetCurrentY>h*.12?'half':'up');}
+  else{const threshold=collapsedOffset()*.42;setSheet(sheetCurrentY>threshold?'down':'up');}
 }
 handleArea.addEventListener('pointerdown',sheetPointerDown);
 handleArea.addEventListener('pointermove',sheetPointerMove);
@@ -484,6 +505,8 @@ shiftIndicator.addEventListener('click',()=>{
   else showToast('Чтобы выйти на линию, перетащи стрелку вправо');
 });
 let searchTimer=null;
+let orderCountdownTimer=null;
+let orderCountdownValue=10;
 let orderVisible=false;
 let searchTier=0;
 const skipOrderButton=document.getElementById('skipOrder');
@@ -494,6 +517,19 @@ const orderDistanceTiers=[
   {distances:[1000],chance:0.75},
   {distances:[1200,1500],chance:1}
 ];
+
+function stopOrderCountdown(){clearInterval(orderCountdownTimer);orderCountdownTimer=null;}
+function startOrderCountdown(){
+  stopOrderCountdown();orderCountdownValue=10;
+  const counter=document.getElementById('skipCountdown');
+  counter.textContent=orderCountdownValue+' сек';
+  orderCountdownTimer=setInterval(()=>{
+    if(!orderVisible){stopOrderCountdown();return;}
+    orderCountdownValue=Math.max(0,orderCountdownValue-1);
+    counter.textContent=orderCountdownValue+' сек';
+    if(orderCountdownValue<=0){stopOrderCountdown();showToast('Время вышло — заказ пропущен');hideOrderAndSearchAgain();}
+  },1000);
+}
 function randomItem(items){return items[Math.floor(Math.random()*items.length)];}
 function showRandomOrder(distance){
   const minutes=Math.max(2,Math.round(distance/230));
@@ -510,15 +546,20 @@ function showRandomOrder(distance){
   document.getElementById('shiftIndicator').classList.remove('visible');
   document.getElementById('topOnlineStatus').classList.remove('visible');
   skipOrderButton.classList.add('visible');
+  sheetElement.classList.remove('search-mode','search-half','collapsed','expanded');
   sheetElement.classList.add('order-mode');
+  startOrderCountdown();
 }
 function hideOrderAndSearchAgain(){
+  stopOrderCountdown();
   orderVisible=false;
   searchTier=0;
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode');sheetElement.style.transform='';sheetElement.classList.remove('collapsed','expanded');
   document.getElementById('topOnlineStatus').classList.add('visible');
   document.getElementById('shiftIndicator').classList.toggle('visible',online);
+  sheetElement.classList.add('search-mode');
+  setSheet('half');
   startOrderSearch();
 }
 function startOrderSearch(){
@@ -539,6 +580,7 @@ function startOrderSearch(){
 }
 skipOrderButton.addEventListener('click',()=>{
   if(!orderVisible)return;
+  stopOrderCountdown();
   showToast('Заказ пропущен');
   hideOrderAndSearchAgain();
 });
@@ -572,6 +614,7 @@ let acceptingOrder=false;
 function acceptCurrentOrder(){
   if(!orderVisible || acceptingOrder)return;
   acceptingOrder=true;
+  stopOrderCountdown();
   clearTimeout(searchTimer);orderVisible=false;
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode','collapsed','expanded');
@@ -630,7 +673,7 @@ function finishArrival(){if(!arrivalDragging)return;arrivalDragging=false;const 
 arrivalKnob.addEventListener('pointerup',finishArrival);arrivalKnob.addEventListener('pointercancel',finishArrival);
 function updateOnline(value){
   online=value;
-  if(!online){clearInterval(pickupDistanceTimer);clearInterval(truckSpeedTimer);document.getElementById('tripPickupDistance').classList.remove('visible');document.getElementById('tripSpeedHud').classList.remove('visible');document.getElementById('shiftIndicator').classList.remove('visible');orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
+  if(!online){stopOrderCountdown();clearInterval(pickupDistanceTimer);clearInterval(truckSpeedTimer);document.getElementById('tripPickupDistance').classList.remove('visible');document.getElementById('tripSpeedHud').classList.remove('visible');document.getElementById('shiftIndicator').classList.remove('visible');orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full','search-mode','search-half','collapsed','expanded');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
   document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
@@ -644,6 +687,8 @@ function updateOnline(value){
   knob.style.transform='';
   clearTimeout(searchTimer);
   if(online){
+    sheetElement.classList.add('search-mode');
+    setSheet('half');
     startOrderSearch();
     showToast('Ты на линии — ищем заказы');
   }else{
