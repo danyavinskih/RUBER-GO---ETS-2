@@ -281,6 +281,17 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 #tripRouteLine.active{opacity:1;filter:drop-shadow(0 2px 5px #087bff55)}
 #tripRouteGlow.active{opacity:.28}
 
+
+/* Спидометр RUBER GO — текущая скорость / ограничение */
+.trip-speed-hud{position:absolute;z-index:12;top:calc(env(safe-area-inset-top) + 16px);right:14px;display:none;align-items:center;gap:7px;padding:5px 7px;border-radius:30px;background:rgba(255,255,255,.94);border:1px solid rgba(207,221,239,.95);box-shadow:0 8px 24px rgba(8,35,69,.16);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#132b49}
+.trip-speed-hud.visible{display:flex;animation:pickupBadgeIn .22s ease both}
+.speed-disc{width:48px;height:48px;box-sizing:border-box;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#fff;border:3px solid #e34c5b;color:#142b49}
+.speed-disc.current{border:1px solid #d9e4f2;background:linear-gradient(145deg,#fff,#f2f7fd);box-shadow:inset 0 1px 3px #0b2b5010}
+.speed-number{font-size:17px;line-height:1;font-weight:900;font-variant-numeric:tabular-nums}
+.speed-unit{font-size:8px;line-height:1.15;font-weight:850;color:#8090a5;margin-top:3px;letter-spacing:.25px}
+.speed-divider{font-size:11px;font-weight:900;color:#8b9bb0}
+.accept-order{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
 </style>
 </head>
 <body>
@@ -314,6 +325,11 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
   </div>
   <button class="shift-indicator" id="shiftIndicator" aria-label="Завершить смену" title="Завершить смену"><span></span></button>
   <div class="trip-pickup-distance" id="tripPickupDistance" aria-label="Осталось до пассажира 30 метров"><span class="pickup-flag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4m1 1h12l-3 4 3 4H6"/><path d="M9 6v3h3V6zm3 3v3h3V9z"/></svg></span><strong id="tripPickupMeters">30 м</strong></div>
+  <div class="trip-speed-hud" id="tripSpeedHud" aria-label="Скорость грузовика и ограничение скорости">
+    <div class="speed-disc current"><span class="speed-number" id="truckSpeed">27</span><span class="speed-unit">КМ/Ч</span></div>
+    <span class="speed-divider">/</span>
+    <div class="speed-disc"><span class="speed-number" id="speedLimit">60</span><span class="speed-unit">ЛИМИТ</span></div>
+  </div>
   <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
   <button class="skip-order" id="skipOrder">Пропустить</button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
@@ -526,6 +542,20 @@ skipOrderButton.addEventListener('click',()=>{
   showToast('Заказ пропущен');
   hideOrderAndSearchAgain();
 });
+let truckSpeedTimer=null;
+function startTruckSpeedDemo(){
+  clearInterval(truckSpeedTimer);
+  const speedEl=document.getElementById('truckSpeed');
+  let speed=27,step=1;
+  speedEl.textContent=speed;
+  truckSpeedTimer=setInterval(()=>{
+    if(!sheetElement.classList.contains('trip-mode')){clearInterval(truckSpeedTimer);return;}
+    speed+=step*(1+Math.floor(Math.random()*2));
+    if(speed>=46){speed=46;step=-1;}
+    if(speed<=19){speed=19;step=1;}
+    speedEl.textContent=speed;
+  },1900);
+}
 let pickupDistanceTimer=null;
 function startPickupDistanceDemo(){
   clearInterval(pickupDistanceTimer);let meters=30;
@@ -538,14 +568,18 @@ function startPickupDistanceDemo(){
     if(meters===0)clearInterval(pickupDistanceTimer);
   },1800);
 }
-document.getElementById('acceptOrder').addEventListener('click',()=>{
-  if(!orderVisible)return;
+let acceptingOrder=false;
+function acceptCurrentOrder(){
+  if(!orderVisible || acceptingOrder)return;
+  acceptingOrder=true;
   clearTimeout(searchTimer);orderVisible=false;
   skipOrderButton.classList.remove('visible');
   sheetElement.classList.remove('order-mode','collapsed','expanded');
   sheetElement.classList.add('trip-mode');sheetElement.style.transform='';
   document.getElementById('shiftIndicator').classList.remove('visible');
   document.getElementById('tripPickupDistance').classList.add('visible');
+  document.getElementById('tripSpeedHud').classList.add('visible');
+  startTruckSpeedDemo();
   startPickupDistanceDemo();
   document.getElementById('tripPickup').textContent=document.getElementById('pickupAddress').textContent;
   const pickupStreet=document.getElementById('pickupAddress').textContent.split(',')[0].trim();
@@ -561,12 +595,23 @@ document.getElementById('acceptOrder').addEventListener('click',()=>{
   document.getElementById('tripMarkerA').classList.add('visible');document.getElementById('tripMarkerB').classList.remove('visible');
   document.getElementById('topOnlineStatus').classList.remove('visible');
   showToast('Заказ принят — направляйся к пассажиру');
+}
+const acceptOrderButton=document.getElementById('acceptOrder');
+// pointerdown реагирует сразу при касании на iPhone, не ожидая задержку click.
+acceptOrderButton.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='touch' || e.pointerType==='pen'){e.preventDefault();acceptCurrentOrder();}
 });
+// click оставлен для мыши, клавиатуры и браузеров без Pointer Events.
+acceptOrderButton.addEventListener('click',()=>acceptCurrentOrder());
+
 document.getElementById('cancelTrip').addEventListener('click',()=>{
   if(!sheetElement.classList.contains('trip-mode'))return;
   sheetElement.classList.remove('trip-mode','trip-half','trip-full');sheetElement.style.transform='';
   document.getElementById('tripPickupDistance').classList.remove('visible');
+  document.getElementById('tripSpeedHud').classList.remove('visible');
+  clearInterval(truckSpeedTimer);
   clearInterval(pickupDistanceTimer);
+  acceptingOrder=false;
   document.getElementById('shiftIndicator').classList.toggle('visible',online && !orderVisible);
   document.getElementById('tripMapChip').classList.remove('visible');
   document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');
@@ -585,7 +630,7 @@ function finishArrival(){if(!arrivalDragging)return;arrivalDragging=false;const 
 arrivalKnob.addEventListener('pointerup',finishArrival);arrivalKnob.addEventListener('pointercancel',finishArrival);
 function updateOnline(value){
   online=value;
-  if(!online){clearInterval(pickupDistanceTimer);document.getElementById('tripPickupDistance').classList.remove('visible');document.getElementById('shiftIndicator').classList.remove('visible');orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
+  if(!online){clearInterval(pickupDistanceTimer);clearInterval(truckSpeedTimer);document.getElementById('tripPickupDistance').classList.remove('visible');document.getElementById('tripSpeedHud').classList.remove('visible');document.getElementById('shiftIndicator').classList.remove('visible');orderVisible=false;skipOrderButton.classList.remove('visible');sheetElement.classList.remove('order-mode','trip-mode','trip-half','trip-full');sheetElement.style.transform='';document.getElementById('tripMapChip').classList.remove('visible');document.getElementById('tripRouteLine').classList.remove('active');document.getElementById('tripRouteGlow').classList.remove('active');document.getElementById('tripMarkerA').classList.remove('visible');document.getElementById('tripMarkerB').classList.remove('visible');arrivalSlider.classList.remove('done');arrivalKnob.style.transform='';arrivalOffset=0;document.getElementById('arrivalLabel').textContent='На месте';document.querySelector('.trip-status').textContent='В пути';}
   onlineControl.classList.toggle('online-now',online);
   onlineControl.classList.toggle('searching',online);
   document.getElementById('topOnlineStatus').classList.toggle('visible',online && !orderVisible);
