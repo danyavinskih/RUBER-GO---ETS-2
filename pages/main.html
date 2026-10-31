@@ -245,6 +245,27 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 @media(max-height:700px){.sheet.trip-mode{height:66vh;min-height:360px}.trip-view{gap:10px;padding:12px 15px 12px}.trip-route-card{padding:10px 12px}.arrival-slider{height:60px}.arrival-knob{height:48px;width:48px}}
 
 
+
+/* Плавающая шкала навигации: прикреплена к шторке и движется вместе с ней */
+.trip-progress-float{position:absolute;left:14px;right:14px;top:-116px;z-index:12;display:none;flex-direction:column;gap:8px;pointer-events:none;transition:opacity .22s ease,transform .22s ease;}
+.sheet.trip-mode .trip-progress-float{display:flex;}
+.trip-street-pill{align-self:center;display:flex;align-items:center;gap:9px;max-width:calc(100% - 24px);padding:9px 16px;border-radius:999px;background:rgba(255,255,255,.94);border:1px solid rgba(224,234,246,.95);box-shadow:0 7px 22px rgba(10,35,65,.13);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);color:#142b49;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.trip-street-icon{width:22px;height:22px;flex:none;display:grid;place-items:center;border-radius:8px;background:#eaf4ff;color:#087bff;}
+.trip-street-icon svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.trip-progress-card{padding:12px 16px 14px;border-radius:22px;background:rgba(255,255,255,.96);border:1px solid rgba(226,235,246,.95);box-shadow:0 9px 28px rgba(10,35,65,.15);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
+.trip-progress-stats{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;color:#152c49;font-size:17px;font-weight:850;letter-spacing:-.35px;font-variant-numeric:tabular-nums;}
+.trip-progress-stats strong:nth-child(2){font-size:16px;color:#657991;}
+.trip-progress-stats strong:last-child{color:#087bff;}
+.trip-progress-track{height:8px;position:relative;margin:0 5px;border-radius:99px;background:#e9eff6;overflow:visible;}
+.trip-progress-muted{position:absolute;inset:0;border-radius:99px;background:linear-gradient(90deg,#e9eff6,#dfeaf7);}
+.trip-progress-fill{position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:99px;background:linear-gradient(90deg,#45a5ff,#087bff 70%,#16b987);transform-origin:left;}
+.trip-progress-arrow{position:absolute;top:50%;left:0;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#fff;border:2px solid #087bff;box-shadow:0 2px 8px #0b4e8d35;transform:translate(-50%,-50%);animation:tripProgressMove 24s cubic-bezier(.35,.05,.25,1) infinite alternate;}
+.trip-progress-arrow svg{width:14px;height:14px;fill:#087bff;}
+.trip-progress-end{position:absolute;right:-1px;top:50%;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid #16b987;transform:translate(50%,-50%);}
+@keyframes tripProgressMove{0%{left:0%}100%{left:100%}}
+@media(max-width:390px){.trip-progress-float{left:10px;right:10px;top:-110px}.trip-progress-card{padding:10px 13px 12px}.trip-progress-stats{font-size:15px;margin-bottom:10px}.trip-street-pill{font-size:13px;padding:8px 14px}}
+@media(prefers-reduced-motion:reduce){.trip-progress-arrow{animation-duration:60s}}
+
 /* Активная поездка: нижняя навигация не перекрывает ручку шторки */
 .sheet.trip-mode ~ .nav{display:none!important}
 .sheet.trip-mode{z-index:8}
@@ -291,6 +312,13 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
   <div class="trip-map-marker a" id="tripMarkerA">A</div><div class="trip-map-marker b" id="tripMarkerB">Б</div>
 
   <section class="sheet" id="sheet">
+    <div class="trip-progress-float" id="tripProgressFloat" aria-label="Прогресс поездки">
+      <div class="trip-street-pill"><span class="trip-street-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z"/><circle cx="12" cy="9" r="2.4"/></svg></span><span id="tripStreetName">Студёный проезд</span></div>
+      <div class="trip-progress-card">
+        <div class="trip-progress-stats"><strong id="tripProgressDistance">37 м</strong><strong id="tripProgressClock">10:36</strong><strong id="tripProgressEta">1 мин</strong></div>
+        <div class="trip-progress-track"><div class="trip-progress-muted"></div><div class="trip-progress-fill"></div><span class="trip-progress-arrow"><svg viewBox="0 0 24 24"><path d="M4 3 21 12 4 21l3-9-3-9Z"/></svg></span><span class="trip-progress-end"></span></div>
+      </div>
+    </div>
     <div class="handle-area" id="handleArea"><div class="handle"></div><div class="sheet-caption">ПОТЯНИ ВВЕРХ ИЛИ ВНИЗ</div></div>
     <div class="sheet-body">
       <div class="default-view">
@@ -493,6 +521,8 @@ document.getElementById('acceptOrder').addEventListener('click',()=>{
   sheetElement.classList.remove('order-mode','collapsed','expanded');
   sheetElement.classList.add('trip-mode');sheetElement.style.transform='';
   document.getElementById('tripPickup').textContent=document.getElementById('pickupAddress').textContent;
+  const pickupStreet=document.getElementById('pickupAddress').textContent.split(',')[0].trim();
+  document.getElementById('tripStreetName').textContent=pickupStreet || 'Маршрут поездки';
   document.getElementById('tripDropoff').textContent=document.getElementById('dropoffAddress').textContent;
   document.getElementById('tripPayment').textContent=Math.random()<.65?'Картой':'Наличными';
   document.getElementById('tripPrice').textContent=(350+Math.floor(Math.random()*301/10)*10)+' ₽';
