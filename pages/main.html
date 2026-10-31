@@ -304,6 +304,44 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
 .accept-order{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 </style>
+<style>
+
+/* RUBER GO v8 — единый фирменный синий цвет всех шторок */
+.sheet.search-mode,
+.sheet.order-mode,
+.sheet.trip-mode{
+  background:linear-gradient(155deg,#102f5d 0%,#0b2144 58%,#071832 100%) !important;
+  border:1px solid rgba(101,168,243,.30) !important;
+  border-bottom:0 !important;
+  box-shadow:0 -12px 35px rgba(2,12,29,.32) !important;
+}
+.sheet.search-mode .handle,
+.sheet.trip-mode .handle{background:rgba(180,211,247,.72) !important}
+.sheet.search-mode .sheet-caption{color:#a9c5e8 !important}
+.sheet.search-mode .sheet-body{color:#f2f7ff !important}
+.sheet.search-mode .stats{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12)}
+.sheet.search-mode .stat-label,.sheet.search-mode .muted{color:#b7cbe5}
+.sheet.order-mode .order-sheet{color:#f4f8ff !important}
+.sheet.order-mode .order-address{color:#f0f6ff !important}
+.sheet.order-mode .order-minutes{color:#eaf3ff !important}
+.sheet.order-mode .order-passenger{color:#f0f6ff !important}
+.sheet.order-mode .passenger-rating{color:#e7f1ff !important}
+.sheet.order-mode .order-divider{background:rgba(190,216,247,.20) !important}
+.sheet.order-mode .order-letter{background:#f5f9ff !important}
+.sheet.order-mode .order-type{background:rgba(91,163,242,.18) !important;color:#a9d2ff !important;border:1px solid rgba(112,180,255,.22)}
+.sheet.trip-mode .trip-title{color:#f3f8ff !important}
+.sheet.trip-mode .trip-meta{color:#b7cbe5 !important}
+.sheet.trip-mode .trip-meta strong{color:#f2f7ff !important}
+.sheet.trip-mode .handle{background:rgba(180,211,247,.72) !important}
+/* Таймер теперь располагается непосредственно под надписью «Пропустить» */
+.skip-order.visible{
+  display:flex !important;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:9px 23px 10px;min-width:146px;
+}
+.skip-order .skip-label{order:1;line-height:1.2}
+.skip-order .skip-countdown{order:2;font-size:12px;font-weight:850;line-height:1.1;color:#087bff;font-variant-numeric:tabular-nums}
+
+</style>
 </head>
 <body>
 
@@ -342,7 +380,7 @@ button,input{font:inherit}button{border:0;cursor:pointer;-webkit-tap-highlight-c
     <div class="speed-disc"><span class="speed-number" id="speedLimit">60</span><span class="speed-unit">ЛИМИТ</span></div>
   </div>
   <div class="top-online-status" id="topOnlineStatus"><span class="state">Онлайн</span><strong>Ищем заказы</strong></div>
-  <button class="skip-order" id="skipOrder"><span class="skip-countdown" id="skipCountdown">10 сек</span><span class="skip-label">Пропустить</span></button>
+  <button class="skip-order" id="skipOrder"><span class="skip-label">Пропустить</span><span class="skip-countdown" id="skipCountdown">10 сек</span></button>
   <div class="locator"><svg viewBox="0 0 60 70"><path d="M30 2L54 62L30 51L6 62Z" fill="#f7f7f7" stroke="#23344c" stroke-width="2"/><path d="M30 2L30 51L6 62Z" fill="#6e7782"/><path d="M30 2L54 62L30 51Z" fill="#f5f7f8"/></svg></div>
   <button class="map-recenter" id="recenter">◎</button>
   <div class="trip-map-chip" id="tripMapChip"><span class="mini-dot"></span><span>Маршрут поездки</span></div>
